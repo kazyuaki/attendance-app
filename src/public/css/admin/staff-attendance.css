@@ -1,0 +1,55 @@
+body {
+    max-width: 1500px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: #f0eff2;
+    color: #333;
+    margin: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 32px;
+}
+
+h2 {
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: bold;
+    border-left: 6px solid #000;
+    padding-left: 10px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    font-family: "Inter", sans-serif;
+    font-weight: bold;
+    color: #737373;
+}
+
+.attendance-table th {
+    font-size: 16px;
+    font-weight: bold;
+    color: #737373;
+    padding: 20px 0;
+    border-bottom: 3px solid #ddd;
+}
+
+.attendance-table td {
+    padding: 20px 0;
+    text-align: center;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-link {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
