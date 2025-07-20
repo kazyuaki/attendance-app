@@ -1,0 +1,113 @@
+/* === 全体レイアウト === */
+body {
+    max-width: 1500px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: #f0eff2;
+    color: #333;
+    margin: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 32px;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 32px;
+    padding-left: 10px;
+    border-left: 5px solid #000;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    
+}
+.attendance-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 20px 20px 20px 50px;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.attendance-table th {
+    width: 150px;
+    font-family: Inter, sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    color: #737373;
+}
+
+.attendance-table td {
+    font-weight: bold;
+}
+
+.attendance-table input[type="text"],
+.attendance-table input[type="time"],
+.attendance-table textarea {
+    font-family: inherit;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.time-input {
+    width: 80px;
+    text-align: center;
+}
+
+.attendance-table textarea {
+    width: 70%;
+    height: 50px;
+    resize: none;
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.date-cell .year,
+.date-cell .day {
+    display: inline-block;
+}
+
+.date-cell .day {
+    padding-left: 60px;
+}
+
+.button-wrapper {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.edit-button {
+    padding: 8px 24px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.tilde {
+    font-size: 16px;
+}
