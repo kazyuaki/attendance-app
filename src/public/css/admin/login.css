@@ -73,6 +73,15 @@ body {
     font-size: 22px;
 }
 
+.register__link {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 22px;
+}
+
 .login__link:hover {
     text-decoration: underline;
 }
