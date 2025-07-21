@@ -50,11 +50,19 @@ h2 {
     height: 25px;
 }
 
+.arrow-icon {
+    width: 20px;
+    height: 14px;
+    vertical-align: middle;
+}
+
 .date-nav__text {
     font-size: 16px;
     font-weight: bold;
     color: #000;
+    vertical-align: middle;
 }
+
 .attendance-table {
     width: 100%;
     border-collapse: collapse;
@@ -62,12 +70,13 @@ h2 {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    font-family: "Inter", sans-serif;
+    font-weight: bold;
+    color: #737373;
 }
 
 .attendance-table th {
-    font-size: 14px;
-    font-weight:100;
-    color: #333;
+    font-size: 16px;
     padding: 12px 0;
     border-bottom: 2px solid #ddd;
 }
@@ -75,7 +84,7 @@ h2 {
 .attendance-table td {
     padding: 12px 0;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     border-bottom: 1px solid #eee;
 }
 
