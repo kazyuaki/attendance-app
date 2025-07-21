@@ -24,7 +24,7 @@ h2 {
     display: flex;
     margin-bottom: 20px;
     border-bottom: 1px solid #000;
-        /* ← 黒線を表示 */}
+}
 
 .approval-tab__stay,
 .approval-tab__done {
@@ -39,10 +39,9 @@ h2 {
 .approval-tab__stay.active,
 .approval-tab__done.active {
     color: #000;
-    /* アクティブな方は黒に */
     border-bottom: 2px solid #000;
-    /* 下線も追加すると見本に近づきます */
 }
+
 .approval-tab__stay:hover,
 .approval-tab__done:hover {
     background-color: #eee;
@@ -67,11 +66,13 @@ h2 {
 }
 
 .attendance-table td {
-    padding: 12px 0;
+    padding: 12px 20px;
     text-align: center;
     font-size: 16px;
     border-bottom: 1px solid #eee;
 }
+
+
 
 .detail-link {
     color: #000;

@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理者 申請一覧</title>
+    <title>管理者 修正申請承認画面</title>
     <link rel="stylesheet" href="../../../css/common.css">
-    <link rel="stylesheet" href="../../../css/admin/approval.css">
+    <link rel="stylesheet" href="../../../css/admin/show_approval.css">
 </head>
 
 <body>
@@ -29,41 +29,60 @@
     </header>
     <main>
         <div class="container">
-            <h2>申請一覧</h2>
-            <div class="approval-tab">
-                <div class="approval-tab__stay active" >承認待ち</div>
-                <div class="approval-tab__done">承認済み</div>
-            </div>
+            <h2 class="page-title">勤怠詳細</h2>
+
             <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th>状態</th>
-                        <th>名前</th>
-                        <th>対象日時</th>
-                        <th>申請理由</th>
-                        <th>申請日時</th>
-                        <th>詳細</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>承認待ち</td>
-                        <td>西 怜奈</td>
-                        <td>2023/06/01</td>
-                        <td>遅延のため</td>
-                        <td>2023/06/02</td>
-                        <td><a href="#" class="detail-link">詳細</a></td>
-                    </tr>
-                    <tr>
-                        <td>承認待ち</td>
-                        <td>山田 太郎</td>
-                        <td>2023/06/01</td>
-                        <td>遅延のため</td>
-                        <td>2023/08/02</td>
-                        <td><a href="#" class="detail-link">詳細</a></td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <th class="row-header">名前</th>
+                    <td colspan="2">西 怜奈</td>
+                </tr>
+                <tr>
+                    <th class="row-header">日付</th>
+                    <td colspan="2" class="date-cell">
+                        <span class="year">2023年</span>
+                        <span class="day">6月1日</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">出勤・退勤</th>
+                    <td class="input-cell">
+                        <div class="time-range">
+                            <p>09:00</p>
+                            <span class="tilde">〜</span>
+                            <p>18:00</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">休憩</th>
+                    <td class="input-cell">
+                        <div class="time-range">
+                            <p>12:00</p>
+                            <span class="tilde">〜</span>
+                            <p>13:00</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">休憩2</th>
+                    <td class="input-cell">
+                        <div class="time-range">
+
+                            <span class="tilde">〜</span>
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">備考</th>
+                    <td colspan="2" class="input-cell">
+                       <p>電車遅延のため</p>
+                    </td>
+                </tr>
             </table>
+            <div class="button-wrapper">
+                <button class="edit-button">承認</button>
+            </div>
         </div>
     </main>
 </body>
