@@ -1,0 +1,53 @@
+.condition {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    background-color: #C8C8C8;
+    color: #000;
+    border-radius: 9999px;
+    font-size: 14px;
+    text-align: center;
+    margin: 40px auto 0;
+    display: block;
+    width: fit-content;
+}
+
+.punch__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    margin-top: 60px;
+}
+
+.punch__item {
+    text-align: center;
+}
+
+.year-date {
+    font-size: 40px;
+    font-weight: 100;
+    margin: 0 0 10px 0;
+}
+
+.time {
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+}
+
+.punch__button {
+    background-color: #000;
+    color: #fff;
+    font-size: 24px;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.punch__button:hover {
+    background-color: #333;
+}
