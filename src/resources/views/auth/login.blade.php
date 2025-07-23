@@ -9,15 +9,23 @@
 @section('content')
 <main class="main">
     <h1 class="main__title">ログイン</h1>
-    <form action="" method="post" class="login-form">
+    <form action="{{ route('login') }}" method="post" class="login-form">
+        @csrf
+
         <div class="form-group">
             <label for="email" class="form-group__label">メールアドレス</label>
-            <input type="email" id="email" name="email" required class="form-group__input">
+            <input type="email" id="email" name="email" class="form-group__input" value="{{ old('email') }}">
+            @error('email')
+            <div class="form-error-message">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="form-group">
             <label for="password" class="form-group__label">パスワード</label>
-            <input type="password" id="password" name="password" required class="form-group__input">
+            <input type="password" id="password" name="password" class="form-group__input">
+            @error('password')
+            <div class="form-error-message">{{ $message }}</div>
+            @enderror
         </div>
 
         <button type="submit" class="login__button">ログインする</button>

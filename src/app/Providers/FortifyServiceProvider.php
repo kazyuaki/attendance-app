@@ -3,10 +3,7 @@
 namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Actions\Fortify\ResetUserPassword;
-use App\Actions\Fortify\UpdateUserPassword;
-use App\Actions\Fortify\UpdateUserProfileInformation;
-use App\Providers\RouteServiceProvider;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -27,14 +24,9 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // ユーザー操作のバインディング
         Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        Fortify::registerView(function (){
-            return view('auth.register');
-        });
         /**
+         * 
          * ✅ ログイン画面をURLによって出し分ける
          */
         Fortify::loginView(function () {
@@ -47,6 +39,9 @@ class FortifyServiceProvider extends ServiceProvider
          * ✅ 認証ロジックの分岐（ガードの切り替え）
          */
         Fortify::authenticateUsing(function (Request $request) {
+            app(LoginRequest::class)->validateResolved();
+
+            // 管理者ログインと一般ユーザーログインを分ける
             if (request()->is('admin/*')) {
                 $admin = \App\Models\AdminUser::where('email', $request->email)->first();
 
@@ -65,7 +60,9 @@ class FortifyServiceProvider extends ServiceProvider
             return null;
         });
 
-        Fortify::redirects(RouteServiceProvider::getHome());
+
+        Fortify::redirects('login', '/attendance');
+        Fortify::redirects('register', '/login');
 
         /**
          * ✅ ログイン制限

@@ -20,11 +20,14 @@
 
             <div class="nav-links">
 
-                <a href="">勤怠</a>
-                <a href="">勤怠一覧</a>
-                <a href="">スタッフ一覧</a>
-                <a href="">申請一覧</a>
-                <a href="" class="">ログアウト</a>
+                <a href="{{ route('attendance.create') }}">勤怠</a>
+                <a href="{{ route('attendance.index') }}">勤怠一覧</a>
+                <a href="{{ route('request.index') }}">申請一覧</a>
+
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout-button">ログアウト</button>
+                </form>
 
             </div>
         </div>

@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\AttendanceController;
 use App\Http\Controllers\AttendanceEditRequestController;
-use Laravel\Fortify\Http\Controllers\RegisteredUserController;
-
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisteredAdminUserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,10 +18,15 @@ use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest')
+    ->name('register.store');
 // Fortify のルーティング（ログイン・登録）は Fortify が自動で定義
 
 // 認証後のルート（一般ユーザー）
@@ -38,5 +44,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 申請一覧
     Route::get('/stamp_correction_request/list', [AttendanceEditRequestController::class, 'index'])->name('request.index');
 });
-
-

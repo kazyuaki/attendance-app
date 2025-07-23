@@ -17,11 +17,11 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
-    public static function getHome()
-    {
-        return request()->is('admin/*') ? '/admin/dashboard' : '/attendance';
-    }   
+    public const HOME = '/login';
+    // public static function getHome()
+    // {
+    //     return request()->is('admin/*') ? '/admin/dashboard' : '/attendance';
+    // }   
 
     /**
      * The controller namespace for the application.
