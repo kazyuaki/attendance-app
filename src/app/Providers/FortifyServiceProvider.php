@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -30,6 +31,9 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
+        Fortify::registerView(function (){
+            return view('auth.register');
+        });
         /**
          * ✅ ログイン画面をURLによって出し分ける
          */
@@ -60,6 +64,8 @@ class FortifyServiceProvider extends ServiceProvider
 
             return null;
         });
+
+        Fortify::redirects(RouteServiceProvider::getHome());
 
         /**
          * ✅ ログイン制限
