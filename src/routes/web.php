@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\Auth\AttendanceController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceEditRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\Auth\LoginController;

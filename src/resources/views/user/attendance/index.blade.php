@@ -11,14 +11,14 @@
         <h2>勤怠一覧</h2>
         <div class="date-nav">
             <button class="date-nav__button">
-                <img src="../../../img/arow-left.png" alt="矢印" class="arrow-icon">
+                <img src="../../../img/arrow-left.png" alt="矢印" class="arrow-icon">
                 前月</button>
             <div class="date-nav__center">
                 <img src="../../../img/calendar.png" alt="カレンダー" class="calendar-icon">
                 <span class="date-nav__text">2023/06</span>
             </div>
             <button class="date-nav__button">翌月
-                <img src="../../../img/arow-right.png" alt="矢印" class="arrow-icon">
+                <img src="../../../img/arrow-right.png" alt="矢印" class="arrow-icon">
             </button>
         </div>
 
@@ -35,20 +35,14 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>06/01(木)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
+                    @foreach ($attendances as $attendance)
+                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
+                    <td>--:--</td> {{-- 休憩時間（あとで計算する場合） --}}
+                    <td>--:--</td> {{-- 合計時間（あとで計算する場合） --}}
                     <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/02(金)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    @endforeach
                 </tr>
             </tbody>
         </table>

@@ -1,15 +1,21 @@
+body{
+    background-color: #F0EFF2;
+    font-family: 'Inter', sans-serif;
+}
 .condition {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 8px 14px;
     border: 1px solid #ccc;
     background-color: #C8C8C8;
-    color: #000;
+    color: #696969;
     border-radius: 9999px;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: bold;
     text-align: center;
     margin: 40px auto 0;
     display: block;
-    width: fit-content;
+    width: 65px;
+    letter-spacing: 0.15em;
 }
 
 .punch__inner {
@@ -25,29 +31,64 @@
 }
 
 .year-date {
-    font-size: 40px;
+    font-size: 34px;
     font-weight: 100;
+    line-height: 48px;
+    width: 330px;
     margin: 0 0 10px 0;
 }
 
 .time {
-    font-size: 60px;
+    font-size: 65px;
     font-weight: bold;
     margin: 0 0 20px 0;
+}
+
+.button__group {
+    display: flex;
+    gap: 60px;
+    margin-top: 20px;
 }
 
 .punch__button {
     background-color: #000;
     color: #fff;
-    font-size: 24px;
-    padding: 16px 32px;
+    font-size: 28px;
+    padding: 15px 32px;
+    width: 200px;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    letter-spacing: 0.15em;
 }
 
 .punch__button:hover {
     background-color: #333;
+}
+.break__button {
+    background-color: #FFFFFF;
+    color: #000000;
+    font-size: 28px;
+    padding: 15px 32px;
+    width: 200px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    letter-spacing: 0.15em;
+}
+
+.punch__button:hover {
+    background-color: #333;
+}
+.message {
+    font-size: 28px;
+    font-weight: 600;
+    color: #000000;
+    margin-top: 20px;
+    text-align: center;
+    letter-spacing: 0.15em;
 }
