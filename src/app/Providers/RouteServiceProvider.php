@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/login';
+    public const HOME = '/attendance';
     // public static function getHome()
     // {
     //     return request()->is('admin/*') ? '/admin/dashboard' : '/attendance';

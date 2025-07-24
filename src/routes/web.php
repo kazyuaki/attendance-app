@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Auth\AttendanceController;
 use App\Http\Controllers\AttendanceEditRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -21,12 +22,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/register', [RegisteredUserController::class, 'create'])
-    ->middleware('guest')
-    ->name('register');
-Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->middleware('guest')
-    ->name('register.store');
+// 認証ルート
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+});
 // Fortify のルーティング（ログイン・登録）は Fortify が自動で定義
 
 // 認証後のルート（一般ユーザー）

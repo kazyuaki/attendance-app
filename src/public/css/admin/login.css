@@ -97,5 +97,6 @@ body {
 .form-error-message {
     color: red;
     font-size: 0.875rem;
+    font-weight: bold;
     margin-top: 4px;
 }
