@@ -34,16 +34,16 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($attendances as $attendance)
                 <tr>
-                    @foreach ($attendances as $attendance)
                     <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
-                    <td>--:--</td> {{-- 休憩時間（あとで計算する場合） --}}
-                    <td>--:--</td> {{-- 合計時間（あとで計算する場合） --}}
+                    <td>{{ $attendance->break_time_formatted ?? '--:--' }}</td>
+                    <td>{{ $attendance->total_work_time ?? '--:--' }}</td>
                     <td><a href="#" class="detail-link">詳細</a></td>
-                    @endforeach
                 </tr>
+                @endforeach
             </tbody>
         </table>
     </div>

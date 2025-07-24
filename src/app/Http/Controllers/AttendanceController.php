@@ -101,7 +101,27 @@ class AttendanceController extends Controller
             ->get();
 
         foreach ($attendances as $attendance) {
+            // 曜日
             $attendance->day_of_week = Carbon::parse($attendance->work_date)->locale('ja')->translatedFormat('ddd');
+
+            // 休憩時間（分単位で計算）
+            $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
+                if ($break->break_start && $break->break_end) {
+                    return Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
+                }
+                return 0;
+            });
+
+            $attendance->break_time_formatted = sprintf('%02d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60);
+
+            // 合計勤務時間（出勤～退勤 - 休憩）
+            if ($attendance->clock_in && $attendance->clock_out) {
+                $workMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in));
+                $netMinutes = max($workMinutes - $totalBreakMinutes, 0);
+                $attendance->total_work_time = sprintf('%02d:%02d', floor($netMinutes / 60), $netMinutes % 60);
+            } else {
+                $attendance->total_work_time = '--:--';
+            }
         }
 
         return view('user.attendance.index', compact('attendances'));
