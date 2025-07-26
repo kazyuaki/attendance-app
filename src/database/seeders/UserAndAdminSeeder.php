@@ -30,24 +30,36 @@ class UserAndAdminSeeder extends Seeder
         for ($i = 1; $i < 7; $i++) {
             $date = now()->copy()->subDays($i); // ← 固定日を取得
 
+            $clockIn = $date->copy()->setTime(9, 0)->addMinutes(rand(-15, 15));
+            $clockOut = $date->copy()->setTime(17, 0)->addMinutes(rand(0, 60));
+
             $attendance = Attendance::factory()->create([
                 'user_id' => $user->id,
                 'work_date' => $date->toDateString(),
-                'clock_in' => $date->copy()->setTime(9, 0),
-                'clock_out' => $date->copy()->setTime(17, 0),
+                'clock_in' => $clockIn,
+                'clock_out' => $clockOut,
             ]);
 
-            // 各日付に2つの休憩を登録（12:00〜12:30、15:00〜15:15）
+            // 休憩1（ランチ） 11:45〜12:15 スタート → 30分休憩
+            $break1Start = $date->copy()->setTime(12, 0)->addMinutes(rand(-15, 15));
+            $break1End = (clone $break1Start)->addMinutes(30);
+
+            // 休憩2（午後） 14:45〜15:15 スタート → 15分休憩
+            $break2Start = $date->copy()->setTime(15, 0)->addMinutes(rand(-15, 0));
+            $break2End = (clone $break2Start)->addMinutes(15);
+
             BreakTime::factory()->create([
                 'attendance_id' => $attendance->id,
-                'break_start' => $date->copy()->setTime(12, 0),
-                'break_end' => $date->copy()->setTime(12, 30),
+                'break_start' => $break1Start,
+                'break_end' => $break1End,
+                'break_number' => 1,
             ]);
 
             BreakTime::factory()->create([
                 'attendance_id' => $attendance->id,
-                'break_start' => $date->copy()->setTime(15, 0),
-                'break_end' => $date->copy()->setTime(15, 15),
+                'break_start' => $break2Start,
+                'break_end' => $break2End,
+                'break_number' => 2,
             ]);
         }
     }

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -39,7 +41,12 @@ class FortifyServiceProvider extends ServiceProvider
          * ✅ 認証ロジックの分岐（ガードの切り替え）
          */
         Fortify::authenticateUsing(function (Request $request) {
-            app(LoginRequest::class)->validateResolved();
+            try {
+                app(LoginRequest::class)->validateResolved();
+            } catch (ValidationException $e) {
+                // Laravel標準のフォームリクエストメッセージを使って戻す
+                throw $e;
+            }
 
             // 管理者ログインと一般ユーザーログインを分ける
             if (request()->is('admin/*')) {

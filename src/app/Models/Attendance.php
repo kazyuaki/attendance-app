@@ -30,6 +30,16 @@ class Attendance extends Model
         return $this->hasMany(BreakTime::class);
     }
 
+    public function break1()
+    {
+        return $this->hasOne(BreakTime::class)->where('break_number', 1);
+    }
+
+    public function break2()
+    {
+        return $this->hasOne(BreakTime::class)->where('break_number', 2);
+    }
+
     public function attendanceEditRequests()
     {
         return $this->hasMany(AttendanceEditRequest::class);

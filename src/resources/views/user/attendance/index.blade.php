@@ -41,7 +41,7 @@
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
                     <td>{{ $attendance->break_time_formatted ?? '--:--' }}</td>
                     <td>{{ $attendance->total_work_time ?? '--:--' }}</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    <td><a href="{{ route('attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>
                 @endforeach
             </tbody>

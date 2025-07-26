@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory(10)->create();
         \App\Models\User::factory(10)->create();
 
-        \App\Models\Attendance::factory(20)->create();
-        \App\Models\BreakTime::factory(30)->create();
+        \App\Models\Attendance::factory(10)->create();
+        \App\Models\BreakTime::factory(20)->create();
 
         $this->call(UserAndAdminSeeder::class);
     }

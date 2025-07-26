@@ -7,6 +7,7 @@ use App\Models\BreakTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -61,8 +62,20 @@ class AttendanceController extends Controller
                 break;
 
             case 'break_start':
+                // まだ終わってない休憩がないかチェック（戻るボタン押してないケース防止）
+                $existingOpenBreak = $attendance->breakTimes()->whereNull('break_end')->exists();
+                if ($existingOpenBreak) {
+                    return back()->withErrors(['error' => 'すでに休憩中です。先に休憩を終了してください。']);
+                }
+
+                // 今の勤怠に紐づく「終了済みの休憩」の数をカウント
+                $breakCount = $attendance->breakTimes()->whereNotNull('break_end')->count();
+
+                $breakNumber = $breakCount === 0 ? 1 : 2;
+
                 $attendance->breakTimes()->create([
                     'break_start' => $now,
+                    'break_number' => $breakNumber
                 ]);
                 break;
 
@@ -125,5 +138,16 @@ class AttendanceController extends Controller
         }
 
         return view('user.attendance.index', compact('attendances'));
+    }
+
+    public function show($id)
+    {
+        $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
+
+        $breaks = $attendance->breakTimes->groupBy('break_number');
+        $break1 = $breaks->get(1) ? $breaks->get(1)->first() : null;
+        $break2 = $breaks->get(2) ? $breaks->get(2)->first() : null;
+
+        return view('user.attendance.show', compact('attendance', 'break1', 'break2'));
     }
 }
