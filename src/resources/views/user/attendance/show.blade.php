@@ -36,9 +36,9 @@
                 <th class="row-header">休憩</th>
                 <td class="input-cell">
                     <div class="time-range">
-                        <input type="text" value="{{ optional($attendance->break1)->break_start }}">
+                        <input type="text" name="break_start" class="time-input" value="{{ optional(optional($attendance->break1)->break_start)->format('H:i') }}">
                         <span class="tilde">〜</span>
-                        <input type="text" class="time-input" value="{{ optional($attendance->break1)->break_end }}">
+                        <input type="text" name="break_end" class="time-input"  value="{{ optional(optional($attendance->break1)->break_end)->format('H:i') }}">
                     </div>
                 </td>
             </tr>
@@ -46,9 +46,9 @@
                 <th class="row-header">休憩2</th>
                 <td class="input-cell">
                     <div class="time-range">
-                        <input type="text" class="time-input" value="{{ optional($attendance->break2)->break_start }}">
+                        <input type="text" class="time-input" value="{{ optional(optional($attendance->break2)->break_start)->format('H:i') }}">
                         <span class="tilde">〜</span>
-                        <input type="text" class="time-input" value="{{ optional($attendance->break2)->break_end }}">
+                        <input type="text" class="time-input" value="{{ optional(optional($attendance->break2)->break_end)->format('H:i') }}">
                     </div>
                 </td>
             </tr>

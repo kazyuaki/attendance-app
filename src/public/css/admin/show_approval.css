@@ -73,6 +73,8 @@ body {
 .time-input {
     width: 80px;
     text-align: center;
+    font-weight: bold;
+    letter-spacing: 0.15em;
 }
 
 .attendance-table textarea {
@@ -86,6 +88,7 @@ body {
 .date-cell .year,
 .date-cell .day {
     display: inline-block;
+    letter-spacing: 0.15em;
 }
 
 .date-cell .day {
