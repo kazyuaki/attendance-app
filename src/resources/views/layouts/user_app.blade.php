@@ -22,7 +22,7 @@
 
                 <a href="{{ route('attendance.create') }}">勤怠</a>
                 <a href="{{ route('attendance.index') }}">勤怠一覧</a>
-                <a href="{{ route('request.index') }}">申請一覧</a>
+                <a href="{{ route('user.request.index') }}">申請一覧</a>
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

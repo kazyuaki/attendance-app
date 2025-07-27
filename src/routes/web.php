@@ -5,8 +5,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceEditRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Admin\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisteredAdminUserController;
+use App\Http\Controllers\AttendanceViewController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,8 +38,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
 
     // 勤怠詳細
-    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+    Route::get('/attendance/detail/{id}', [AttendanceViewController::class, 'show'])->name('attendance.show');
 
-    // 申請一覧
-    Route::get('/stamp_correction_request/list', [AttendanceEditRequestController::class, 'index'])->name('request.index');
+    // 修正申請 保存処理（POST）
+    Route::post('/stamp_correction_request', [AttendanceEditRequestController::class, 'store'])->name('user.request.store');
+
+    // 修正申請 一覧表示（GET）
+    Route::get('/stamp_correction_request/list', [AttendanceEditRequestController::class, 'index'])->name('user.request.index');
 });

@@ -12,8 +12,12 @@ class AttendanceEditRequest extends Model
     protected $fillable = [
         'attendance_id',
         'user_id',
-        'edit_clock_in',
-        'edit_clock_out',
-        'edited_note'
+        'clock_in',
+        'clock_out',
+        'break1_start',
+        'break1_end',
+        'break2_start',
+        'break2_end',
+        'note'
     ];
 }

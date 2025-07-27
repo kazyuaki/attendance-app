@@ -7,7 +7,6 @@ use App\Models\BreakTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -135,14 +134,5 @@ class AttendanceController extends Controller
         return view('user.attendance.index', compact('attendances'));
     }
 
-    public function show($id)
-    {
-        $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
 
-        $breaks = $attendance->breakTimes->groupBy('break_number');
-        $break1 = $breaks->get(1) ? $breaks->get(1)->first() : null;
-        $break2 = $breaks->get(2) ? $breaks->get(2)->first() : null;
-        
-        return view('user.attendance.show', compact('attendance', 'break1', 'break2'));
-    }
 }
