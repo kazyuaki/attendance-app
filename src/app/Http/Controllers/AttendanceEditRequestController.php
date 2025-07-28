@@ -39,7 +39,8 @@ class AttendanceEditRequestController extends Controller
             'note' => $validated['note'],
         ]);
 
-        return redirect()->route('user.request.index')->with('success', '修正申請を送信しました。');
+        return redirect()->route('attendance.show', ['id' => $validated['attendance_id']])
+            ->with('success', '修正申請を送信しました。');
     }
 
     public function index()

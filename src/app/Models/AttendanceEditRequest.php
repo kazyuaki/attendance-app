@@ -20,4 +20,14 @@ class AttendanceEditRequest extends Model
         'break2_end',
         'note'
     ];
+
+    public function attendance()
+    {
+        return $this->belongsTo(Attendance::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

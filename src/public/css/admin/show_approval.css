@@ -29,16 +29,14 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     
 }
-.attendance-table tr {
-    border-bottom: 1px solid #ddd;
-}
+
 
 .attendance-table th,
 .attendance-table td {
     padding: 20px 20px 20px 50px;
     font-size: 14px;
     text-align: left;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #ddd;
     vertical-align: middle;
 }
 
@@ -85,14 +83,23 @@ body {
     padding: 8px;
 }
 
-.date-cell .year,
-.date-cell .day {
-    display: inline-block;
+.date-cell {
+    display: flex;
     letter-spacing: 0.15em;
+    gap: 60px
 }
 
-.date-cell .day {
-    padding-left: 60px;
+.time-cell {
+    white-space: nowrap;
+}
+
+.time-start,
+.time-end,
+.wavy-dash {
+    display: inline-block;
+    min-width: 4em;
+    letter-spacing: 0.2em;
+    text-align: center;
 }
 
 .button-wrapper {
@@ -113,4 +120,9 @@ body {
 
 .tilde {
     font-size: 16px;
+}
+
+.alert {
+    color :red;
+    text-align: right;
 }
