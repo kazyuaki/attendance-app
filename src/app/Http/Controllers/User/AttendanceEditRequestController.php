@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Http\Requests\AttendanceEditRequestForm;
+use App\Http\Controllers\Controller;
 use App\Models\AttendanceEditRequest;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
