@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\AttendanceEditRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 
 
@@ -18,11 +19,17 @@ class AttendanceController extends Controller
     // 詳細表示（管理者側）
     public function show($id)
     {
-             
         $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
-        dd($attendance->clock_in, $attendance->clock_out);
-        
-        return view('admin.attendance.show', compact('attendance'));
+
+        $pendingRequest = AttendanceEditRequest::where('attendance_id', $id)
+            ->where('status', 'pending')
+            ->first(); 
+
+        $breaks = $attendance->breakTimes->groupBy('break_number');
+        $break1 = $breaks->get(1)?->first();
+        $break2 = $breaks->get(2)?->first();
+
+        return view('admin.attendance.show', compact('attendance', 'break1', 'break2', 'pendingRequest'));
     }
 
 
