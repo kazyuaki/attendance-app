@@ -20,11 +20,10 @@
 
             <div class="nav-links">
 
-                <a href="">勤怠一覧</a>
-                <a href="">スタッフ一覧</a>
-                <a href="">申請一覧</a>
-                <a href="" class="">ログアウト</a>
-
+                <a href="{{ route('admin.attendances.index') }}">勤怠一覧</a>
+                <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
+                <a href="#">申請一覧</a>
+                <a href="/admin/login">ログアウト</a>
             </div>
 
         </div>

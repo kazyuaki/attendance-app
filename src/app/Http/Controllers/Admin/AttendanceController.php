@@ -6,24 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceEditRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
-
+use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with(['user', 'breakTimes', 'attendanceEditRequests'])->latest()->get();
-        return view('admin.attendance.index', compact('attendances'));
+        $date = $request->input('date') ?? now()->toDateString();
+        $attendances = Attendance::with(['user', 'breakTimes', 'attendanceEditRequests'])
+            ->whereDate('work_date', $date)
+            ->latest()
+            ->get();
+        return view('admin.attendance.index', compact('attendances', 'date'));
     }
 
     // 詳細表示（管理者側）
-    public function show($id)
+    public function show($id, Request $request)
     {
+
         $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
 
         $pendingRequest = AttendanceEditRequest::where('attendance_id', $id)
             ->where('status', 'pending')
-            ->first(); 
+            ->first();
 
         $breaks = $attendance->breakTimes->groupBy('break_number');
         $break1 = $breaks->get(1)?->first();
@@ -32,8 +37,9 @@ class AttendanceController extends Controller
         return view('admin.attendance.show', compact('attendance', 'break1', 'break2', 'pendingRequest'));
     }
 
-
-    public function update(UpdateAttendanceRequest $request, $id) {
+    //管理者 勤怠詳細修正機能
+    public function update(UpdateAttendanceRequest $request, $id)
+    {
         $attendance = Attendance::with('breakTimes')->findOrFail($id);
 
         $date = $attendance->work_date;
@@ -61,7 +67,7 @@ class AttendanceController extends Controller
             $break2->save();
         }
 
-        return redirect()->route('admin.attendances.show', $attendance->id)
+        return redirect()->route('admin.attendances.index', $attendance->id)
             ->with('success', '勤怠データを更新しました。');
     }
 }

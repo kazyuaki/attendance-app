@@ -11,13 +11,15 @@ class CreateAdminUsersTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
         Schema::create('admin_users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

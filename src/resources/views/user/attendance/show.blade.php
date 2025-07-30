@@ -28,7 +28,6 @@
                     <p class="time-start">{{ $pendingRequest->clock_in ? \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') : '-' }}</p>
                     <p class="wavy-dash">〜</p>
                     <p class="time-end">{{ $pendingRequest->clock_out ? \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') : '-' }}</p>
-                </td>
             </tr>
             <tr>
                 <th class="row-header">休憩</th>
@@ -77,6 +76,12 @@
                             <span class="tilde">〜</span>
                             <input type="text" name="clock_out" class="time-input" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
                         </div>
+                        @error('clock_in')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error('clock_out')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 <tr>
@@ -87,6 +92,12 @@
                             <span class="tilde">〜</span>
                             <input type="text" class="time-input" name="break1_end" value="{{ $attendance->break1?->break_end?->format('H:i') }}">
                         </div>
+                        @error('break1_start')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error('break1_end')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 <tr>
@@ -97,6 +108,12 @@
                             <span class="tilde">〜</span>
                             <input type="text" class="time-input" name="break2_end" value="{{ $attendance->break2?->break_end?->format('H:i') }}">
                         </div>
+                        @error('break2_start')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error('break2_end')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 <tr>

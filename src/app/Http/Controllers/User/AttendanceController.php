@@ -100,12 +100,22 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.create')->with('success', '操作が完了しました。');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $date = $request->input('date') ?? now()->format('Y-m');
 
-        $attendances = Attendance::where('user_id', $user->id)
-            ->orderBy('work_date', 'desc')
+        try {
+            $carbonDate = \Carbon\Carbon::createFromFormat('Y-m', $date)->startOfMonth();
+        } catch (\Exception $e) {
+            $carbonDate = now()->startOfMonth(); // fallback
+        }
+        
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $user->id)
+            ->whereYear('work_date', $carbonDate->year)
+            ->whereMonth('work_date', $carbonDate->month)
+            ->orderBy('work_date', 'asc')
             ->get();
 
         foreach ($attendances as $attendance) {
@@ -132,8 +142,9 @@ class AttendanceController extends Controller
             }
         }
 
-        return view('user.attendance.index', compact('attendances'));
+        return view('user.attendance.index', [
+            'attendances' => $attendances,
+            'currentMonth' => $carbonDate
+        ]);
     }
-
-
 }

@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AttendanceEditRequestController;
+use App\Http\Controllers\User\AttendanceController;
+use App\Http\Controllers\User\AttendanceEditRequestController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\AttendanceViewController;
+use App\Http\Controllers\User\AttendanceViewController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

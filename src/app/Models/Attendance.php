@@ -17,7 +17,10 @@ class Attendance extends Model
         'note',
     ];
 
-
+    protected $casts = [
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+    ];
 
 
     public function user()

@@ -9,17 +9,25 @@
 <main>
     <div class="container">
         <h2>勤怠一覧</h2>
+        @php
+        $currentDate = \Carbon\Carbon::parse($date);
+        $prevDate = $currentDate->copy()->subDay()->format('Y-m-d');
+        $nextDate = $currentDate->copy()->addDay()->format('Y-m-d');
+        @endphp
+
         <div class="date-nav">
-            <button class="date-nav__button">
-                <img src="../../../img/arrow-left.png" alt="矢印" class="arrow-icon">
-                前日</button>
+            <a href="{{ route('admin.attendances.index', ['date' => $prevDate]) }}" class="date-nav__button">
+                <img src="{{ asset('img/arrow-left.png') }}" alt="前日" class="arrow-icon"> 前日
+            </a>
+
             <div class="date-nav__center">
-                <img src="../../../img/calendar.png" alt="カレンダー" class="calendar-icon">
-                <span class="date-nav__text">2023/06/01</span>
+                <img src="{{ asset('img/calendar.png') }}" alt="カレンダー" class="calendar-icon">
+                <span class="date-nav__text">{{ $currentDate->format('Y/m/d') }}</span>
             </div>
-            <button class="date-nav__button">翌日
-                <img src="../../../img/arrow-right.png" alt="矢印" class="arrow-icon">
-            </button>
+
+            <a href="{{ route('admin.attendances.index', ['date' => $nextDate]) }}" class="date-nav__button">
+                翌日 <img src="../../../img/arrow-right.png" alt="翌日" class="arrow-icon">
+            </a>
         </div>
 
         <table class="attendance-table">
@@ -40,32 +48,19 @@
                     <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
                     <td>{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}</td>
                     <td>
-                        {{ gmdate('H:i', $attendance->break_times->sum(function($b) {
+                        {{ gmdate('H:i', ($attendance->break_times ?? collect())->sum(function($b) {
                             return strtotime($b->break_end) - strtotime($b->break_start);
-                        })) }}
+                            })) 
+                        }}
                     </td>
-                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breaks->sum(function($b) {
-                            return strtotime($b->break_end) - strtotime($b->break_start);
-                        })) }}
+                    <td>
+                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($b) {
+                return strtotime($b->break_end) - strtotime($b->break_start);
+            })) }}
+                    </td>
                     <td><a href="{{ route('admin.attendances.show', $attendance->id) }}" class="detail-link">詳細</a></td>
                 </tr>
-                <tr>
-                    <td>山田 太郎</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>田中 花子</td>
-                    <td>08:30</td>
-                    <td>17:30</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <!-- 他のスタッフのデータも同様に追加 -->
+                @endforeach
             </tbody>
         </table>
     </div>

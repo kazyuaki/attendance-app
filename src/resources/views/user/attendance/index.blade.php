@@ -9,17 +9,24 @@
 <main>
     <div class="container">
         <h2>勤怠一覧</h2>
+        @php
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
+        @endphp
+
         <div class="date-nav">
-            <button class="date-nav__button">
-                <img src="../../../img/arrow-left.png" alt="矢印" class="arrow-icon">
-                前月</button>
+            <a href="{{ route('attendance.index', ['date' => $prevMonth]) }}" class="date-nav__button">
+                <img src="{{ asset('img/arrow-left.png') }}" alt="前月" class="arrow-icon"> 前月
+            </a>
+
             <div class="date-nav__center">
-                <img src="../../../img/calendar.png" alt="カレンダー" class="calendar-icon">
-                <span class="date-nav__text">2023/06</span>
+                <img src="{{ asset('img/calendar.png') }}" alt="カレンダー" class="calendar-icon">
+                <span class="date-nav__text">{{ $currentMonth->format('Y/m') }}</span>
             </div>
-            <button class="date-nav__button">翌月
-                <img src="../../../img/arrow-right.png" alt="矢印" class="arrow-icon">
-            </button>
+
+            <a href="{{ route('attendance.index', ['date' => $nextMonth]) }}" class="date-nav__button">
+                翌月 <img src="{{ asset('img/arrow-right.png') }}" alt="翌月" class="arrow-icon">
+            </a>
         </div>
 
         <table class="attendance-table">
