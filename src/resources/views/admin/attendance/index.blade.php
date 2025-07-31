@@ -48,14 +48,14 @@
                     <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
                     <td>{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}</td>
                     <td>
-                        {{ gmdate('H:i', ($attendance->break_times ?? collect())->sum(function($b) {
-                            return strtotime($b->break_end) - strtotime($b->break_start);
+                        {{ gmdate('H:i', ($attendance->breakTimes ?? collect())->sum(function($break) {
+                            return strtotime($break->break_end) - strtotime($break->break_start);
                             })) 
                         }}
                     </td>
                     <td>
-                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($b) {
-                return strtotime($b->break_end) - strtotime($b->break_start);
+                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($break) {
+                return strtotime($break->break_end) - strtotime($break->break_start);
             })) }}
                     </td>
                     <td><a href="{{ route('admin.attendances.show', $attendance->id) }}" class="detail-link">詳細</a></td>

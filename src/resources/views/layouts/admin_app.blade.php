@@ -14,7 +14,7 @@
         <div class="header__inner">
             <div class="header__logo">
                 <a href="">
-                    <img src="../../img/logo.svg" alt="COACHTECH" width="350">
+                    <img src="{{ asset('img/logo.svg') }}" alt="COACHTECH" width="350">
                 </a>
             </div>
 

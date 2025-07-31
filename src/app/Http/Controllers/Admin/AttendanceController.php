@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceEditRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
@@ -53,21 +54,33 @@ class AttendanceController extends Controller
 
         // 休憩1
         $break1 = $attendance->breakTimes()->where('break_number', 1)->first();
-        if ($break1) {
-            $break1->break_start = $validated['break1_start'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null;
-            $break1->break_end = $validated['break1_end'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null;
+        if (!$break1 && ($validated['break1_start'] || $validated['break1_end'])) {
+            $break1 = $attendance->breakTimes()->create([
+                'break_number' => 1,
+                'break_start' => $validated['break1_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null,
+                'break_end' => $validated['break1_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null,
+            ]);
+        } elseif ($break1) {
+            $break1->break_start = $validated['break1_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null;
+            $break1->break_end = $validated['break1_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null;
             $break1->save();
         }
 
         // 休憩2
         $break2 = $attendance->breakTimes()->where('break_number', 2)->first();
-        if ($break2) {
-            $break2->break_start = $validated['break2_start'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null;
-            $break2->break_end = $validated['break2_end'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null;
+        if (!$break2 && ($validated['break2_start'] || $validated['break2_end'])) {
+            $break2 = $attendance->breakTimes()->create([
+                'break_number' => 2,
+                'break_start' => $validated['break2_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null,
+                'break_end' => $validated['break2_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null,
+            ]);
+        } elseif ($break2) {
+            $break2->break_start = $validated['break2_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null;
+            $break2->break_end = $validated['break2_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null;
             $break2->save();
         }
 
-        return redirect()->route('admin.attendances.index', $attendance->id)
+        return redirect()->route('admin.attendances.index')
             ->with('success', '勤怠データを更新しました。');
     }
 }
