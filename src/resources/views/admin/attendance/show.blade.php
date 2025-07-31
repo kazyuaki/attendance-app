@@ -1,7 +1,7 @@
 @extends('layouts.admin_app')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/admin/show_approval.css">
+<link rel="stylesheet" href="{{ asset('css/admin/show_approval.css') }}">
 @endsection
 
 @section('title', '管理者勤怠詳細| 勤怠管理システム')
@@ -30,7 +30,7 @@
                 </td>
             </tr>
             <tr>
-                <th class="row-header">申請休憩1</th>
+                <th class="row-header">休憩</th>
                 <td>
                     {{ $pendingRequest->break1_start ? \Carbon\Carbon::parse($pendingRequest->break1_start)->format('H:i') : '-' }}
                     〜
@@ -38,7 +38,7 @@
                 </td>
             </tr>
             <tr>
-                <th class="row-header">申請休憩2</th>
+                <th class="row-header">休憩2</th>
                 <td>
                     {{ $pendingRequest->break2_start ? \Carbon\Carbon::parse($pendingRequest->break2_start)->format('H:i') : '-' }}
                     〜
@@ -46,7 +46,7 @@
                 </td>
             </tr>
             <tr>
-                <th class="row-header">申請備考</th>
+                <th class="row-header">備考</th>
                 <td>{{ $pendingRequest->note ?? '-' }}</td>
             </tr>
         </table>

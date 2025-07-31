@@ -1,7 +1,7 @@
 @extends('layouts/guest')
 
 @section('css')
-<link rel="stylesheet" href="../../css/admin/login.css">
+<link rel="stylesheet" href="{{ asset('css/admin/login.css') }}">
 @endsection
 </head>
 

@@ -16,6 +16,7 @@ class AttendanceViewController extends Controller
         $pendingRequest = AttendanceEditRequest::where('user_id', Auth::id())
             ->where('attendance_id', $id)
             ->where('status', 'pending')
+            ->latest()
             ->first();
 
         $breaks = $attendance->breakTimes->groupBy('break_number');

@@ -1,8 +1,7 @@
 @extends('layouts.guest')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/common.css">
-<link rel="stylesheet" href="../../../css/admin/login.css">
+<link rel="stylesheet" href="{{ asset('css/admin/login.css') }}">
 @endsection
 
 @section('title', '管理者ログイン | 勤怠管理システム')

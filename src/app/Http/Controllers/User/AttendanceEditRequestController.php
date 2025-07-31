@@ -44,13 +44,16 @@ class AttendanceEditRequestController extends Controller
             ->with('success', '修正申請を送信しました。');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $requests = AttendanceEditRequest::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
+        $status = $request->input('status','pending');
+        $requests = AttendanceEditRequest::with(['attendance', 'user'])
+            ->where('user_id', Auth::id())
+            ->where('status', $status)
+            ->orderBy('created_at', 'asc')
             ->get();
 
-        return view('user.request.index', compact('requests'));
+        return view('user.request.index', compact('requests','status'));
     }
 
 

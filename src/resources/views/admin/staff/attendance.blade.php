@@ -1,7 +1,7 @@
 @extends('layouts.admin_app')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/admin/attendance-index.css">
+<link rel="stylesheet" href="{{ asset('css/admin/attendance-index.css') }}">
 @endsection
 
 @section('title', '管理者 スタッフ別勤怠一覧 | 勤怠管理システム')

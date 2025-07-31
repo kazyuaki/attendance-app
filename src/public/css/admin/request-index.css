@@ -26,6 +26,10 @@ h2 {
     border-bottom: 1px solid #000;
 }
 
+.approval-tab a {
+    text-decoration: none;
+}
+
 .approval-tab__stay,
 .approval-tab__done {
     padding: 12px 16px;
@@ -39,7 +43,6 @@ h2 {
 .approval-tab__stay.active,
 .approval-tab__done.active {
     color: #000;
-    border-bottom: 2px solid #000;
 }
 
 .approval-tab__stay:hover,

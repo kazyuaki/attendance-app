@@ -1,7 +1,7 @@
 @extends('layouts.user_app')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/admin/request-index.css">
+<link rel="stylesheet" href="{{ asset('css/admin/request-index.css') }}">
 @endsection
 
 @section('title', 'ユーザー 修正一覧 | 勤怠管理システム')
@@ -12,8 +12,14 @@
     <div class="container">
         <h2>申請一覧</h2>
         <div class="approval-tab">
-            <div class="approval-tab__stay active">承認待ち</div>
-            <div class="approval-tab__done">承認済み</div>
+            <a href="{{ route('user.request.index', ['status' => 'pending']) }}"
+                class="approval-tab__stay {{ request('status', 'pending') === 'pending' ? 'active' : '' }}">
+                承認待ち
+            </a>
+            <a href="{{ route('user.request.index', ['status' => 'approved']) }}"
+                class="approval-tab__done {{ request('status') === 'approved' ? 'active' : '' }}">
+                承認済み
+            </a>
         </div>
         <table class="attendance-table">
             <thead>

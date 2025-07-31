@@ -1,7 +1,7 @@
 @extends('layouts.user_app')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/user/punch.css">
+<link rel="stylesheet" href="{{ asset('css/user/punch.css') }}">
 @endsection
 
 @section('title', 'ユーザー 出退勤登録 | 勤怠管理システム')

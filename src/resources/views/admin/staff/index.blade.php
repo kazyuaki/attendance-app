@@ -2,7 +2,7 @@
 @section('title', 'スタッフ一覧')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/admin/staff-index.css">
+<link rel="stylesheet" href="{{ asset('css/admin/staff-index.css') }}">
 @endsection
 
 @section('title', '管理者 スタッフ一覧 | 勤怠管理システム')

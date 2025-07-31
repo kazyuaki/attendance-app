@@ -3,7 +3,7 @@
 @section('title', '管理者 申請一覧 | 勤怠管理システム')
 
 @section('css')
-<link rel="stylesheet" href="../../../css/admin/request-index.css">
+<link rel="stylesheet" href="{{ asset('css/admin/request-index.css') }}">
 @endsection
 
 @section('content')
@@ -35,7 +35,7 @@
                     <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
                     <td>{{ $request->note ?? '-' }}</td>
                     <td>{{ $request->created_at->format('Y/m/d') }}</td>
-                    <td><a href="#" class="detail-link">詳細</a>
+                    <td><a href="{{ route('admin.requests.show',['id' => $request->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
