@@ -18,7 +18,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // 認証後の管理者画面
     Route::middleware(['auth:admin'])->group(function () {
-        Route::get('dashboard', fn() => redirect()->route('attendances.index'))->name('dashboard');
+        Route::get('dashboard', fn() => redirect()->route('admin.attendances.index'))->name('dashboard');
 
         Route::get('attendances', [AdminAttendanceController::class, 'index'])->name('attendances.index');
         Route::get('attendances/{id}', [AdminAttendanceController::class, 'show'])->name('attendances.show');

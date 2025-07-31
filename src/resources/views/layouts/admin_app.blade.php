@@ -23,7 +23,10 @@
                 <a href="{{ route('admin.attendances.index') }}">勤怠一覧</a>
                 <a href="{{ route('admin.users.index') }}">スタッフ一覧</a>
                 <a href="{{ route('admin.requests.index') }}">申請一覧</a>
-                <a href="/admin/login">ログアウト</a>
+                <form action="{{ route('admin.logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="logout-button">ログアウト</button>
+                </form>
             </div>
 
         </div>

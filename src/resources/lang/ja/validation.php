@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'required' => ':attribute は必須項目です。',
+    'required' => ':attribute を入力してください。',
     'email' => ':attribute は有効なメールアドレス形式で入力してください。',
     'min' => [
         'string' => ':attribute は :min 文字以上で入力してください。',

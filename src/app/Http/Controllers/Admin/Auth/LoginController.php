@@ -23,8 +23,9 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => '認証情報が一致しませんでした。',
-        ])->withInput();    }
+            'login' => 'ログイン情報が登録されていません',
+        ])->withInput();
+    }
 
     public function logout(Request $request)
     {

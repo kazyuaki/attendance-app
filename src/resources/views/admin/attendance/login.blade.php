@@ -26,6 +26,9 @@
             @error('password')
             <div class="error-message">{{ $message }}</div>
             @enderror
+            @error('login')
+            <div class="error-message">{{ $message }}</div>
+            @enderror
         </div>
         <button type="submit" class="login__button">管理者ログインする</button>
     </form>

@@ -18,7 +18,7 @@
             <label for="email" class="form-group__label">メールアドレス</label>
             <input type="email" id="email" name="email" class="form-group__input" value="{{ old('email') }}">
             @error('email')
-            <div class="form-error-message">{{ $message }}</div>
+            <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
@@ -26,7 +26,7 @@
             <label for="password" class="form-group__label">パスワード</label>
             <input type="password" id="password" name="password" class="form-group__input">
             @error('password')
-            <div class="form-error-message">{{ $message }}</div>
+            <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
