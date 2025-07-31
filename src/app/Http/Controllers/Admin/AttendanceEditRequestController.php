@@ -5,9 +5,23 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceEditRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceEditRequestController extends Controller
 {
+    public function index(Request $request)
+    {
+        $status = $request->query('status', 'pending');
+
+        $requests = AttendanceEditRequest::with('user', 'attendance')
+            ->when($status === 'done', fn($query) => $query->where('status', 'approved'))
+            ->when($status === 'pending', fn($query) => $query->where('status', 'pending'))
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('admin.request.index', compact('requests', 'status'));
+    }
+
     // // 承認処理（管理者側）
     // public function approve(Request $request, $id)
     // {
