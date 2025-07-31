@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="../../../css/user/punch.css">
 @endsection
 
+@section('title', 'ユーザー 出退勤登録 | 勤怠管理システム')
+
 
 @section('content')
 <main>

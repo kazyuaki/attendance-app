@@ -4,6 +4,9 @@
 <link rel="stylesheet" href="../../../css/admin/request-index.css">
 @endsection
 
+@section('title', 'ユーザー 修正一覧 | 勤怠管理システム')
+
+
 @section('content')
 <main>
     <div class="container">

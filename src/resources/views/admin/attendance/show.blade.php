@@ -4,6 +4,9 @@
 <link rel="stylesheet" href="../../../css/admin/show_approval.css">
 @endsection
 
+@section('title', '管理者勤怠詳細| 勤怠管理システム')
+
+
 @section('content')
 <main>
     <div class="container">

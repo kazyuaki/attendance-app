@@ -4,6 +4,9 @@
 <link rel="stylesheet" href="../../../css/admin/attendance-index.css">
 @endsection
 
+@section('title', '管理者 スタッフ別勤怠一覧 | 勤怠管理システム')
+
+
 @section('content')
 <main>
     <div class="container">
@@ -45,8 +48,18 @@
                     <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
                     <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
-                    <td>{{ $attendance->breakTime_formatted ?? '--:--' }}</td>
-                    <td>{{ $attendance->total_work_time ?? '--:--' }}</td>
+                    <td>
+                        {{ gmdate('H:i', ($attendance->breakTimes ?? collect())->sum(function($break) {
+                            return strtotime($break->break_end) - strtotime($break->break_start);
+                            })) 
+                        }}
+                    </td>
+                    <td>
+                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($break) {
+                            return strtotime($break->break_end) - strtotime($break->break_start);
+                            })) 
+                        }}
+                    </td>
                     <td><a href="{{ route('admin.attendances.show',['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>
                 @endforeach

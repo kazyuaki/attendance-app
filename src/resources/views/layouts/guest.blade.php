@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン前ヘッダー</title>
+    <title>@yield('title','ログイン前ヘッダー')</title>
     <link rel="stylesheet" href="{{ asset('css/common.css') }}">
     @yield('css')
 </head>

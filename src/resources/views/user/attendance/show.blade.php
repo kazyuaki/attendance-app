@@ -4,8 +4,10 @@
 <link rel="stylesheet" href="../../../css/admin/show_approval.css">
 @endsection
 
-@section('content')
+@section('title', 'ユーザー 勤怠詳細 | 勤怠管理システム')
 
+
+@section('content')
 <main>
     <div class="container">
         <h2 class="page-title">勤怠詳細</h2>

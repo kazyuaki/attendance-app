@@ -5,6 +5,9 @@
 <link rel="stylesheet" href="../../../css/admin/staff-index.css">
 @endsection
 
+@section('title', '管理者 スタッフ一覧 | 勤怠管理システム')
+
+
 @section('content')
 <main>
     <div class="container">

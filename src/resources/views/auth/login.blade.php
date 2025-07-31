@@ -5,6 +5,8 @@
 @endsection
 </head>
 
+@section('title', 'ユーザー ログイン | 勤怠管理システム')
+
 
 @section('content')
 <main class="main">

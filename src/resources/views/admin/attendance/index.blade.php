@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="../../../css/admin/attendance-index.css">
 @endsection
 
+@section('title', '管理者勤怠一覧 | 勤怠管理システム')
+
 @section('content')
 <main>
     <div class="container">
@@ -55,8 +57,9 @@
                     </td>
                     <td>
                         {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($break) {
-                return strtotime($break->break_end) - strtotime($break->break_start);
-            })) }}
+                            return strtotime($break->break_end) - strtotime($break->break_start);
+                            })) 
+                        }}
                     </td>
                     <td><a href="{{ route('admin.attendances.show', $attendance->id) }}" class="detail-link">詳細</a></td>
                 </tr>

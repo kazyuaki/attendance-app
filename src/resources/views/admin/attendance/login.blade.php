@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="../../../css/admin/login.css">
 @endsection
 
+@section('title', '管理者ログイン | 勤怠管理システム')
+
 
 @section('content')
 <main class="main">

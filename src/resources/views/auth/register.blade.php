@@ -4,6 +4,9 @@
 <link rel="stylesheet" href="{{ asset('css/auth/register.css') }}">
 @endsection
 
+@section('title', 'ユーザー 会員登録 | 勤怠管理システム')
+
+
 @section('content')
 <main class="register">
     <h1 class="main__title">会員登録</h1>
