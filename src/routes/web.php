@@ -26,6 +26,26 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 });
+
+// メール認証案内ページ
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// メール認証リンクの処理
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill(); // 認証済みにする
+//     return redirect('/attendance'); // 認証後のリダイレクト先（お好みで変更OK）
+// })->middleware(['auth', 'signed'])->name('verification.verify');
+
+// // 認証メールの再送信
+// Route::post('/email/verification-notification', function (Illuminate\Http\Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
+
+//     return back()->with('message', '認証リンクを再送信しました！');
+// })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
 // Fortify のルーティング（ログイン・登録）は Fortify が自動で定義
 
 // 認証後のルート（一般ユーザー）
