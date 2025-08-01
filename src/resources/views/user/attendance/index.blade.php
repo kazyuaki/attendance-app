@@ -48,7 +48,7 @@
                     <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
                     <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
-                    <td>{{ $attendance->breakTime_formatted ?? '--:--' }}</td>
+                    <td>{{ $attendance->break_time_formatted ?? '--:--' }}</td>
                     <td>{{ $attendance->total_work_time ?? '--:--' }}</td>
                     <td><a href="{{ route('attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>

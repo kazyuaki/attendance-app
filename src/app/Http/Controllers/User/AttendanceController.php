@@ -28,8 +28,8 @@ class AttendanceController extends Controller
                 $status = 'clocked_out';
             } else {
                 $latestBreak = BreakTime::where('attendance_id', $attendance->id)
-                    ->whereNull('break_end')
-                    ->latest('break_start')
+                    ->whereNull('break_out')
+                    ->latest('break_in')
                     ->first();
 
                 if ($latestBreak) {
@@ -58,31 +58,6 @@ class AttendanceController extends Controller
                 if (!$attendance->clock_in) {
                     $attendance->clock_in = $now;
                     $attendance->save();
-                }
-                break;
-
-            case 'break_start':
-
-                // 今の勤怠に紐づく「終了済みの休憩」の数をカウント
-                $breakCount = $attendance->breakTimes()->whereNotNull('break_end')->count();
-
-                $breakNumber = $breakCount === 0 ? 1 : 2;
-
-                $attendance->breakTimes()->create([
-                    'break_start' => $now,
-                    'break_number' => $breakNumber
-                ]);
-                break;
-
-            case 'break_end':
-                $latestBreak = $attendance->breakTimes()
-                    ->whereNull('break_end')
-                    ->latest('break_start')
-                    ->first();
-
-                if ($latestBreak) {
-                    $latestBreak->break_end = $now;
-                    $latestBreak->save();
                 }
                 break;
 
@@ -124,8 +99,8 @@ class AttendanceController extends Controller
 
             // 休憩時間（分単位で計算）
             $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
-                if ($break->break_start && $break->break_end) {
-                    return Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
+                if ($break->break_in && $break->break_out) {
+                    return Carbon::parse($break->break_out)->diffInMinutes(Carbon::parse($break->break_in));
                 }
                 return 0;
             });

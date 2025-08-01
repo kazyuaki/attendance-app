@@ -30,4 +30,14 @@ class AttendanceEditRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function editRequestBreaks()
+    {
+        return $this->hasMany(AttendanceEditRequestBreak::class);
+    }
+
+    public function breaks()
+    {
+        return $this->hasMany(AttendanceEditRequestBreak::class);
+    }
 }

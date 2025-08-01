@@ -11,14 +11,13 @@ class BreakTime extends Model
 
     protected $fillable = [
         'attendance_id',
-        'break_start',
-        'break_end',
-        'break_number',
+        'break_in',
+        'break_out',
     ];
 
     protected $casts = [
-        'break_start' => 'datetime',
-        'break_end' => 'datetime'
+        'break_in' => 'datetime',
+        'break_out' => 'datetime'
     ];
 
     public function attendance()

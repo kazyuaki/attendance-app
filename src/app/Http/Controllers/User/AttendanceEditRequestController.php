@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceEditRequestController extends Controller
 {
@@ -16,29 +17,40 @@ class AttendanceEditRequestController extends Controller
     {
         $validated = $request->validated();
 
-        // 勤怠日を取得
         $attendance = Attendance::findOrFail($validated['attendance_id']);
-        $date = $attendance->work_date; // 'Y-m-d'
+        $date = $attendance->work_date;
 
-        // 時刻入力を datetime に変換（nullならそのまま）
+        // 出退勤の時刻を datetime に変換（nullの場合も考慮）
         $clock_in = $validated['clock_in'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_in']}") : null;
         $clock_out = $validated['clock_out'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_out']}") : null;
-        $break1_start = $validated['break1_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null;
-        $break1_end = $validated['break1_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null;
-        $break2_start = $validated['break2_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null;
-        $break2_end = $validated['break2_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null;
 
-        AttendanceEditRequest::create([
-            'user_id' => Auth::id(),
-            'attendance_id' => $validated['attendance_id'],
-            'clock_in' => $clock_in,
-            'clock_out' => $clock_out,
-            'break1_start' => $break1_start,
-            'break1_end' => $break1_end,
-            'break2_start' => $break2_start,
-            'break2_end' => $break2_end,
-            'note' => $validated['note'],
-        ]);
+        DB::transaction(function () use ($validated, $date, $clock_in, $clock_out) {
+
+            // 勤怠修正申請レコードの作成
+            $requestModel = AttendanceEditRequest::create([
+                'user_id' => Auth::id(),
+                'attendance_id' => $validated['attendance_id'],
+                'clock_in' => $clock_in,
+                'clock_out' => $clock_out,
+                'note' => $validated['note'] ?? null,
+            ]);
+
+            // 休憩情報（breaks）を保存（複数対応）
+            if (!empty($validated['breaks']) && is_array($validated['breaks'])) {
+                foreach ($validated['breaks'] as $break) {
+                    $start = !empty($break['start']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$break['start']}") : null;
+                    $end   = !empty($break['end'])   ? Carbon::createFromFormat('Y-m-d H:i', "$date {$break['end']}") : null;
+
+                    // どちらか一方でもあれば保存（完全に空の行はスキップ）
+                    if ($start || $end) {
+                        $requestModel->editRequestBreaks()->create([
+                            'break_start' => $start,
+                            'break_end' => $end,
+                        ]);
+                    }
+                }
+            }
+        });
 
         return redirect()->route('attendance.show', ['id' => $validated['attendance_id']])
             ->with('success', '修正申請を送信しました。');
@@ -47,7 +59,7 @@ class AttendanceEditRequestController extends Controller
     public function index(Request $request)
     {
         $status = $request->input('status','pending');
-        $requests = AttendanceEditRequest::with(['attendance', 'user'])
+        $requests = AttendanceEditRequest::with(['attendance', 'user', 'editRequestBreaks'])
             ->where('user_id', Auth::id())
             ->where('status', $status)
             ->orderBy('created_at', 'asc')

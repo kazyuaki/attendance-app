@@ -50,16 +50,14 @@ class UserAndAdminSeeder extends Seeder
 
             BreakTime::factory()->create([
                 'attendance_id' => $attendance->id,
-                'break_start' => $break1Start,
-                'break_end' => $break1End,
-                'break_number' => 1,
+                'break_in' => $break1Start,
+                'break_out' => $break1End,
             ]);
 
             BreakTime::factory()->create([
                 'attendance_id' => $attendance->id,
-                'break_start' => $break2Start,
-                'break_end' => $break2End,
-                'break_number' => 2,
+                'break_in' => $break2Start,
+                'break_out' => $break2End,
             ]);
         }
     }
