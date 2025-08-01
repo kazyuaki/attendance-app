@@ -32,17 +32,14 @@
             <tr>
                 <th class="row-header">休憩</th>
                 <td>
-                    {{ $pendingRequest->break1_start ? \Carbon\Carbon::parse($pendingRequest->break1_start)->format('H:i') : '-' }}
+                    @forelse($pendingRequest->editRequestBreaks as $index => $break)
+                    {{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}
                     〜
-                    {{ $pendingRequest->break1_end ? \Carbon\Carbon::parse($pendingRequest->break1_end)->format('H:i') : '-' }}
-                </td>
-            </tr>
-            <tr>
-                <th class="row-header">休憩2</th>
-                <td>
-                    {{ $pendingRequest->break2_start ? \Carbon\Carbon::parse($pendingRequest->break2_start)->format('H:i') : '-' }}
-                    〜
-                    {{ $pendingRequest->break2_end ? \Carbon\Carbon::parse($pendingRequest->break2_end)->format('H:i') : '-' }}
+                    {{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}
+                    @if (!$loop->last)<br>@endif
+                    @empty
+                    -
+                    @endforelse
                 </td>
             </tr>
             <tr>
@@ -84,38 +81,39 @@
                         @enderror
                     </td>
                 </tr>
+                @forelse($attendance->breakTimes->sortBy('break_number') as $index => $break)
+                <tr>
+                    <th class="row-header">
+                        {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
+                    </th>
+                    <td class="input-cell">
+                        <div class="time-range">
+                            <input type="text" name="break{{ $index + 1 }}_start" class="time-input"
+                                value="{{ old('break{$index + 1}_start', $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
+                            <span class="tilde">〜</span>
+                            <input type="text" name="break{{ $index + 1 }}_end" class="time-input"
+                                value="{{ old('break{$index + 1}_end', $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
+                        </div>
+                        @error('break{$index + 1}_start')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error('break{$index + 1}_end')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </td>
+                </tr>
+                @empty
                 <tr>
                     <th class="row-header">休憩</th>
                     <td class="input-cell">
                         <div class="time-range">
-                            <input type="text" name="break1_start" class="time-input" value="{{ old('break1_start', optional($attendance->break1)->break_start ? \Carbon\Carbon::parse($attendance->break1->break_start)->format('H:i') : '') }}">
+                            <input type="text" name="break_start" class="time-input" value="">
                             <span class="tilde">〜</span>
-                            <input type="text" name="break1_end" class="time-input" value="{{ old('break1_end', optional($attendance->break1)->break_end ? \Carbon\Carbon::parse($attendance->break1->break_end)->format('H:i') : '') }}">
+                            <input type="text" name="break_end" class="time-input" value="">
                         </div>
-                        @error('break1_start')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
-                        @error('break1_end')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
                     </td>
                 </tr>
-                <tr>
-                    <th class="row-header">休憩2</th>
-                    <td class="input-cell">
-                        <div class="time-range">
-                            <input type="text" name="break2_start" class="time-input" value="{{ old('break2_start', optional($attendance->break2)->break_start ? \Carbon\Carbon::parse($attendance->break2->break_start)->format('H:i') : '') }}">
-                            <span class="tilde">〜</span>
-                            <input type="text" name="break2_end" class="time-input" value="{{ old('break2_end', optional($attendance->break2)->break_end ? \Carbon\Carbon::parse($attendance->break2->break_end)->format('H:i') : '') }}">
-                        </div>
-                        @error('break2_start')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
-                        @error('break2_end')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </td>
-                </tr>
+                @endforelse
                 <tr>
                     <th class="row-header">備考</th>
                     <td colspan="2" class="input-cell">

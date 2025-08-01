@@ -17,7 +17,28 @@ class AttendanceController extends Controller
         $attendances = Attendance::with(['user', 'breakTimes', 'attendanceEditRequests'])
             ->whereDate('work_date', $date)
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($attendance) {
+                $totalBreakSeconds = $attendance->breakTimes->sum(function ($break) {
+                    if ($break->break_start && $break->break_end) {
+                        return strtotime($break->break_end) - strtotime($break->break_start);
+                    }
+                    return 0;
+                });
+
+                $clockIn = $attendance->clock_in ? strtotime($attendance->clock_in) : null;
+                $clockOut = $attendance->clock_out ? strtotime($attendance->clock_out) : null;
+
+                $workingSeconds = ($clockIn && $clockOut)
+                    ? max(0, $clockOut - $clockIn - $totalBreakSeconds)
+                    : 0;
+
+                // Bladeで直接使えるように追加
+                $attendance->total_break = gmdate('H:i', $totalBreakSeconds);
+                $attendance->working_time = gmdate('H:i', $workingSeconds);
+
+                return $attendance;
+            });
         return view('admin.attendance.index', compact('attendances', 'date'));
     }
 
@@ -31,53 +52,57 @@ class AttendanceController extends Controller
             ->where('status', 'pending')
             ->first();
 
-        $breaks = $attendance->breakTimes->groupBy('break_number');
-        $break1 = $breaks->get(1)?->first();
-        $break2 = $breaks->get(2)?->first();
+        $breaks = $attendance->breakTimes;
 
-        return view('admin.attendance.show', compact('attendance', 'break1', 'break2', 'pendingRequest'));
+        return view('admin.attendance.show', compact('attendance',  'pendingRequest'));
     }
 
     //管理者 勤怠詳細修正機能
     public function update(UpdateAttendanceRequest $request, $id)
     {
         $attendance = Attendance::with('breakTimes')->findOrFail($id);
-
         $date = $attendance->work_date;
-
         $validated = $request->validated();
+
         // 勤怠本体
-        $attendance->clock_in = $validated['clock_in'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_in']}") : null;
-        $attendance->clock_out = $validated['clock_out'] ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_out']}") : null;
+        $attendance->clock_in = $validated['clock_in'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_in']}") : null;
+        $attendance->clock_out = $validated['clock_out'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_out']}") : null;
         $attendance->note = $validated['note'] ?? null;
         $attendance->save();
 
-        // 休憩1
-        $break1 = $attendance->breakTimes()->where('break_number', 1)->first();
-        if (!$break1 && ($validated['break1_start'] || $validated['break1_end'])) {
-            $break1 = $attendance->breakTimes()->create([
-                'break_number' => 1,
-                'break_start' => $validated['break1_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null,
-                'break_end' => $validated['break1_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null,
-            ]);
-        } elseif ($break1) {
-            $break1->break_start = $validated['break1_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_start']}") : null;
-            $break1->break_end = $validated['break1_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break1_end']}") : null;
-            $break1->save();
+        // 既存の休憩を取得（上書き・削除のために）
+        $existingBreaks = $attendance->breakTimes;
+
+        // 入力された休憩を保存・更新
+        $newBreaks = $validated['breaks'] ?? [];
+
+        foreach ($newBreaks as $index => $breakInput) {
+            $start = !empty($breakInput['start']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$breakInput['start']}") : null;
+            $end = !empty($breakInput['end']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$breakInput['end']}") : null;
+
+            // 両方とも空ならスキップ
+            if (!$start && !$end) {
+                continue;
+            }
+
+            $existing = $existingBreaks->get($index);
+            if ($existing) {
+                $existing->break_in = $start;
+                $existing->break_out = $end;
+                $existing->save();
+            } else {
+                $attendance->breakTimes()->create([
+                    'break_in' => $start,
+                    'break_out' => $end,
+                ]);
+            }
         }
 
-        // 休憩2
-        $break2 = $attendance->breakTimes()->where('break_number', 2)->first();
-        if (!$break2 && ($validated['break2_start'] || $validated['break2_end'])) {
-            $break2 = $attendance->breakTimes()->create([
-                'break_number' => 2,
-                'break_start' => $validated['break2_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null,
-                'break_end' => $validated['break2_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null,
-            ]);
-        } elseif ($break2) {
-            $break2->break_start = $validated['break2_start'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_start']}") : null;
-            $break2->break_end = $validated['break2_end'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['break2_end']}") : null;
-            $break2->save();
+        // 余分な休憩（削除）
+        if (count($existingBreaks) > count($newBreaks)) {
+            for ($i = count($newBreaks); $i < count($existingBreaks); $i++) {
+                $existingBreaks[$i]->delete();
+            }
         }
 
         return redirect()->route('admin.attendances.index')

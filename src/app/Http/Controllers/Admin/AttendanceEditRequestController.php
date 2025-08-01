@@ -34,11 +34,9 @@ class AttendanceEditRequestController extends Controller
             ->findOrFail($pendingRequest->attendance_id);
 
 
-        $breaks = $attendance->breakTimes->groupBy('break_number');
-        $break1 = $breaks->get(1) ? $breaks->get(1)->first() : null;
-        $break2 = $breaks->get(2) ? $breaks->get(2)->first() : null;
+        $breaks = $attendance->breakTimes;
 
-        return view('admin.request.approval', compact('attendance', 'break1', 'break2', 'pendingRequest'));
+        return view('admin.request.approval', compact('attendance',  'pendingRequest'));
     }
 
 
@@ -57,20 +55,14 @@ class AttendanceEditRequestController extends Controller
         $attendance->note = $editRequest->note;
         $attendance->save();
 
-        // 休憩1を更新
-        $break1 = $attendance->breakTimes()->where('break_number', 1)->first();
-        if ($break1 && $editRequest->break1_start && $editRequest->break1_end) {
-            $break1->break_start = $editRequest->break1_start;
-            $break1->break_end = $editRequest->break1_end;
-            $break1->save();
-        }
+        $attendance->breakTimes()->delete();
 
-        // 休憩2を更新（必要なら）
-        $break2 = $attendance->breakTimes()->where('break_number', 2)->first();
-        if ($break2 && $editRequest->break2_start && $editRequest->break2_end) {
-            $break2->break_start = $editRequest->break2_start;
-            $break2->break_end = $editRequest->break2_end;
-            $break2->save();
+        // editRequestBreaks をもとに breakTimes を再作成
+        foreach ($editRequest->editRequestBreaks as $editBreak) {
+            $attendance->breakTimes()->create([
+                'break_in' => $editBreak->break_start,
+                'break_out' => $editBreak->break_end,
+            ]);
         }
 
         // 修正申請ステータス更新
