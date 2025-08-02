@@ -43,14 +43,18 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($attendances as $attendance)
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
-                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
-                    <td>{{ $attendance->break_time_formatted ?? '--:--' }}</td>
-                    <td>{{ $attendance->total_work_time ?? '--:--' }}</td>
-                    <td><a href="{{ route('attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
+                @foreach ($daysInMonth as $day)
+                <tr @if($day->is_weekend) style="background-color: #f0f0f0;" @endif>
+                    <td>{{ $day->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
+                    <td>{{ $day->attendance?->clock_in ? $day->attendance->clock_in->format('H:i') : '' }}</td>
+                    <td>{{ $day->attendance?->clock_out ? $day->attendance->clock_out->format('H:i') : '' }}</td>
+                    <td>{{ $day->attendance?->break_time_formatted ?? '' }}</td>
+                    <td>{{ $day->attendance?->total_work_time ?? '' }}</td>
+                    <td>
+                        @if($day->attendance)
+                        <a href="{{ route('attendance.show', ['id' => $day->attendance->id]) }}" class="detail-link">詳細</a>
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
