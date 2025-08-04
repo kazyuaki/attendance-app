@@ -50,13 +50,13 @@
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
                     <td>
                         {{ gmdate('H:i', ($attendance->breakTimes ?? collect())->sum(function($break) {
-                            return strtotime($break->break_end) - strtotime($break->break_start);
+                            return strtotime($break->break_out) - strtotime($break->break_in);
                             })) 
                         }}
                     </td>
                     <td>
                         {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($break) {
-                            return strtotime($break->break_end) - strtotime($break->break_start);
+                            return strtotime($break->break_out) - strtotime($break->break_in);
                             })) 
                         }}
                     </td>

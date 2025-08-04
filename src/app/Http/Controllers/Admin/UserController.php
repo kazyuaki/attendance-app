@@ -37,8 +37,8 @@ class UserController extends Controller
 
             // 休憩時間（分単位で計算）
             $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
-                if ($break->break_start && $break->break_end) {
-                    return Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
+                if ($break->break_in && $break->break_out) {
+                    return Carbon::parse($break->break_out)->diffInMinutes(Carbon::parse($break->break_in));
                 }
                 return 0;
             });

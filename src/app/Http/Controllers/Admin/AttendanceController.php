@@ -20,8 +20,8 @@ class AttendanceController extends Controller
             ->get()
             ->map(function ($attendance) {
                 $totalBreakSeconds = $attendance->breakTimes->sum(function ($break) {
-                    if ($break->break_start && $break->break_end) {
-                        return strtotime($break->break_end) - strtotime($break->break_start);
+                    if ($break->break_in && $break->break_out) {
+                        return strtotime($break->break_out) - strtotime($break->break_in);
                     }
                     return 0;
                 });
@@ -53,7 +53,6 @@ class AttendanceController extends Controller
             ->first();
 
         $breaks = $attendance->breakTimes;
-
         return view('admin.attendance.show', compact('attendance',  'pendingRequest'));
     }
 

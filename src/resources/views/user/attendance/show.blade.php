@@ -37,15 +37,15 @@
                     {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
                 </th>
                 <td class="time-cell">
-                    <p class="time-start">{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}</p>
+                    <p class="time-start">{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '' }}</p>
                     <p class="wavy-dash">〜</p>
-                    <p class="time-end">{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}</p>
+                    <p class="time-end">{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '' }}</p>
                 </td>
             </tr>
             @empty
             <tr>
                 <th class="row-header">休憩</th>
-                <td class="time-cell">-</td>
+                <td class="time-cell"></td>
             </tr>
             @endforelse
             <tr>
@@ -80,9 +80,9 @@
                     {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
                 </th>
                 <td class="time-cell">
-                    <p class="time-start">{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}</p>
+                    <p class="time-start">{{ $break->break_in ? \Carbon\Carbon::parse($break->break_in)->format('H:i') : '-' }}</p>
                     <p class="wavy-dash">〜</p>
-                    <p class="time-end">{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}</p>
+                    <p class="time-end">{{ $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '-' }}</p>
                 </td>
             </tr>
             @empty

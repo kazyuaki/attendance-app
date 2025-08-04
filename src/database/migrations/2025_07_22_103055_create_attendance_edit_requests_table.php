@@ -19,10 +19,6 @@ class CreateAttendanceEditRequestsTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->dateTime('clock_in')->nullable();
             $table->dateTime('clock_out')->nullable();
-            $table->dateTime('break1_start')->nullable();
-            $table->dateTime('break1_end')->nullable();
-            $table->dateTime('break2_start')->nullable();
-            $table->dateTime('break2_end')->nullable();
             $table->text('note')->nullable();
             $table->string('status')->default('pending'); // or enum if使うなら
             $table->timestamps();

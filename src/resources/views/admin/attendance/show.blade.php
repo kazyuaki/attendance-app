@@ -11,7 +11,7 @@
 <main>
     <div class="container">
         <h2 class="page-title">勤怠詳細</h2>
-        @if($pendingRequest)
+        @if ($pendingRequest)
         <table class="attendance-table">
             <tr>
                 <th class="row-header">名前</th>
@@ -19,35 +19,43 @@
             </tr>
             <tr>
                 <th class="row-header">日付</th>
-                <td colspan="2">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</td>
-            </tr>
-            <tr>
-                <th class="row-header">申請出勤・退勤</th>
-                <td>
-                    {{ $pendingRequest->clock_in ? \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') : '-' }}
-                    〜
-                    {{ $pendingRequest->clock_out ? \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') : '-' }}
+                <td colspan="2" class="date-cell">
+                    <span class="year">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年') }}</span>
+                    <span class="day">{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
                 </td>
             </tr>
+            <tr>
+                <th class="row-header">出勤・退勤</th>
+                <td colspan="2">
+                    {{ \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') ?? '-' }} 〜
+                    {{ \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') ?? '-' }}
+                </td>
+            </tr>
+
+            @forelse($pendingRequest->editRequestBreaks as $index => $break)
+            <tr>
+                <th class="row-header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
+                <td colspan="2">
+                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') ?? '-' }} 〜
+                    {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') ?? '-' }}
+                </td>
+            </tr>
+            @empty
             <tr>
                 <th class="row-header">休憩</th>
-                <td>
-                    @forelse($pendingRequest->editRequestBreaks as $index => $break)
-                    {{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}
-                    〜
-                    {{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}
-                    @if (!$loop->last)<br>@endif
-                    @empty
-                    -
-                    @endforelse
-                </td>
+                <td colspan="2">-</td>
             </tr>
+            @endforelse
+
             <tr>
                 <th class="row-header">備考</th>
-                <td>{{ $pendingRequest->note ?? '-' }}</td>
+                <td colspan="2">{{ $pendingRequest->note ?? '-' }}</td>
             </tr>
         </table>
-        <div class="info-message">この勤怠データには承認待ちの修正申請があります。編集はできません。</div>
+
+        <div class="info-message">
+            この勤怠データには承認待ちの修正申請があります。承認画面で承認してください
+        </div>
         @else
         <form action="{{ route('admin.attendances.update', $attendance->id) }}" method="POST">
             @csrf
@@ -69,9 +77,10 @@
                     <td class="input-cell">
                         <div class="time-range">
                             <input type="text" name="clock_in" class="time-input"
-                                value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}"> <span class="tilde">〜</span>
+                                value="{{ old('clock_in', $pendingRequest ? \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') : ($attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '')) }}">
+                            <span class="tilde">〜</span>
                             <input type="text" name="clock_out" class="time-input"
-                                value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
+                                value="{{ old('clock_out', $pendingRequest ? \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') : ($attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '')) }}">
                         </div>
                         @error('clock_in')
                         <div class="error-message">{{ $message }}</div>
@@ -81,7 +90,7 @@
                         @enderror
                     </td>
                 </tr>
-                @forelse($attendance->breakTimes->sortBy('break_number') as $index => $break)
+                @forelse($attendance->breakTimes as $index => $break)
                 <tr>
                     <th class="row-header">
                         {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
@@ -89,16 +98,14 @@
                     <td class="input-cell">
                         <div class="time-range">
                             <input type="text" name="break{{ $index + 1 }}_start" class="time-input"
-                                value="{{ old('break{$index + 1}_start', $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
+                                value="{{ old('break' . ($index + 1) . '_start', $break->break_in ? \Carbon\Carbon::parse($break->break_in)->format('H:i') : '') }}">
                             <span class="tilde">〜</span>
                             <input type="text" name="break{{ $index + 1 }}_end" class="time-input"
-                                value="{{ old('break{$index + 1}_end', $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
+                                value="{{ old('break' . ($index + 1) . '_end', $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '') }}">
                         </div>
-                        @error('break{$index + 1}_start')
-                        <div class="error-message">{{ $message }}</div>
+                        @error('break' . ($index + 1) . '_start') <div class="error-message">{{ $message }}</div>
                         @enderror
-                        @error('break{$index + 1}_end')
-                        <div class="error-message">{{ $message }}</div>
+                        @error('break' . ($index + 1) . '_end') <div class="error-message">{{ $message }}</div>
                         @enderror
                     </td>
                 </tr>
