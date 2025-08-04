@@ -30,6 +30,7 @@
                     <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') ?? '-' }}</p>〜
                     <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') ?? '-' }}</p>
                 </td>
+
             </tr>
 
             @forelse($pendingRequest->editRequestBreaks as $index => $break)
@@ -91,7 +92,7 @@
                         @enderror
                     </td>
                 </tr>
-                @forelse($attendance->breakTimes as $index => $break)exit
+                @forelse($attendance->breakTimes as $index => $break)
                 <tr>
                     <th class="row-header">
                         {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
@@ -104,9 +105,11 @@
                             <input type="text" name="break{{ $index + 1 }}_end" class="time-input"
                                 value="{{ old('break' . ($index + 1) . '_end', $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '') }}">
                         </div>
-                        @error('break' . ($index + 1) . '_start') <div class="error-message">{{ $message }}</div>
+                        @error("breaks.{$index}.start")
+                        <div class="error-message">{{ $message }}</div>
                         @enderror
-                        @error('break' . ($index + 1) . '_end') <div class="error-message">{{ $message }}</div>
+                        @error("breaks.{$index}.end")
+                        <div class="error-message">{{ $message }}</div>
                         @enderror
                     </td>
                 </tr>
@@ -119,6 +122,12 @@
                             <span class="tilde">〜</span>
                             <input type="text" name="break_end" class="time-input" value="">
                         </div>
+                        @error("breaks.0.start")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error("breaks.0.end")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 @endforelse

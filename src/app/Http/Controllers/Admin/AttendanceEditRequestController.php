@@ -26,16 +26,14 @@ class AttendanceEditRequestController extends Controller
 
     public function show($id)
     {
-        $pendingRequest = AttendanceEditRequest::where('attendance_id', $id)
-            ->where('status', 'pending')
-            ->first();
+        $pendingRequest = AttendanceEditRequest::with(['attendance.user', 'editRequestBreaks'])
+            ->findOrFail($id);
 
-        $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
-
-
+        $attendance = $pendingRequest->attendance;
+        $user = $attendance->user;
         $breaks = $attendance->breakTimes;
 
-        return view('admin.request.approval', compact('attendance',  'pendingRequest'));
+        return view('admin.request.approval', compact('pendingRequest', 'attendance', 'user', 'breaks'));
     }
 
 

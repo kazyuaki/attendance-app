@@ -19,7 +19,7 @@ class CreateAttendanceEditRequestsTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->dateTime('clock_in')->nullable();
             $table->dateTime('clock_out')->nullable();
-            $table->text('note')->nullable();
+            $table->text('note');
             $table->string('status')->default('pending'); // or enum if使うなら
             $table->timestamps();
         });

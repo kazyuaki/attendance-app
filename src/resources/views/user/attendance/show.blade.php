@@ -53,7 +53,7 @@
                 <td>{{ $pendingRequest->note ?? '-' }}</td>
             </tr>
         </table>
-        <p class="alert">*承認待ちのため修正できません。</p>
+        <p class="alert">*承認待ちのため修正はできません。</p>
         @elseif($pendingRequest && $pendingRequest->status === 'approved')
         <table class="attendance-table">
             <tr>

@@ -12,8 +12,8 @@
 <main>
     <div class="container">
         <h2 class="page-title">勤怠詳細</h2>
-        @if($pendingRequest)
-        <form action="{{ route('admin.requests.approve', $pendingRequest->id) }}" method="POST">
+        @if($pendingRequest && $pendingRequest->status === 'pending')
+         <form action="{{ route('admin.requests.approve', $pendingRequest->id) }}" method="POST">
             @csrf
             <table class="attendance-table">
                 <tr>

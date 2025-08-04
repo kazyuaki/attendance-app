@@ -7,19 +7,23 @@ use Illuminate\Validation\Validator;
 
 class AttendanceEditRequestForm extends FormRequest
 {
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
     public function authorize(): bool
     {
-        return true; // 必要に応じて認可ロジックを追加
+        return true; 
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
             'attendance_id' => ['required', 'integer', 'exists:attendances,id'],
             'clock_in' => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i'],
             'note' => ['required', 'string'],
-
             'breaks.*.start' => ['nullable', 'date_format:H:i'],
             'breaks.*.end' => ['nullable', 'date_format:H:i'],
         ];
@@ -63,7 +67,7 @@ class AttendanceEditRequestForm extends FormRequest
         });
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
             'breaks.*.start.date_format' => '休憩開始時間は H:i 形式で入力してください。',
