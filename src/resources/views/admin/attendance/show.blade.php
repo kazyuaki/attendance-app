@@ -26,18 +26,19 @@
             </tr>
             <tr>
                 <th class="row-header">出勤・退勤</th>
-                <td colspan="2">
-                    {{ \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') ?? '-' }} 〜
-                    {{ \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') ?? '-' }}
+                <td colspan="2" class="time-range">
+                    <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') ?? '-' }}</p>〜
+                    <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') ?? '-' }}</p>
                 </td>
             </tr>
 
             @forelse($pendingRequest->editRequestBreaks as $index => $break)
             <tr>
                 <th class="row-header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
-                <td colspan="2">
-                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') ?? '-' }} 〜
-                    {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') ?? '-' }}
+                <td colspan="2" class="time-range">
+                    <p class="time-input"> {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') ?? '-' }}</p>
+                    〜
+                    <p class="time-input">{{ \Carbon\Carbon::parse($break->break_end)->format('H:i') ?? '-' }}</p>
                 </td>
             </tr>
             @empty
@@ -90,7 +91,7 @@
                         @enderror
                     </td>
                 </tr>
-                @forelse($attendance->breakTimes as $index => $break)
+                @forelse($attendance->breakTimes as $index => $break)exit
                 <tr>
                     <th class="row-header">
                         {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}

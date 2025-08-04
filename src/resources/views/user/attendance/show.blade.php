@@ -101,7 +101,11 @@
         <form action="{{ route('user.request.store')}}" method="POST">
             @csrf
             <table class="attendance-table">
-                <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+                <tr style="display: none;">
+                    <td colspan="2">
+                        <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+                    </td>
+                </tr>
                 <tr>
                     <th class="row-header">名前</th>
                     <td colspan="2">{{ $attendance->user->name }}</td>
@@ -142,6 +146,12 @@
                             <input type="text" class="time-input" name="breaks[{{ $index }}][end]"
                                 value="{{ old("breaks.$index.end", $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '') }}">
                         </div>
+                        @error("breaks.{$index}.start")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error("breaks.{$index}.end")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 @empty
@@ -153,6 +163,12 @@
                             <span class="tilde">〜</span>
                             <input type="text" class="time-input" name="breaks[0][end]" value="">
                         </div>
+                        @error("breaks.0.start")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
+                        @error("breaks.0.end")
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
                 @endforelse
@@ -161,6 +177,9 @@
                     <th class="row-header">備考</th>
                     <td colspan="2" class="input-cell">
                         <textarea class="note-area" name="note">{{ old('note', $attendance->note ?? '') }}</textarea>
+                        @error('note')
+                        <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </td>
                 </tr>
             </table>

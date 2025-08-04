@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 @foreach ($daysInMonth as $day)
-                <tr @if($day->is_weekend) style="background-color: #f0f0f0;" @endif>
+                <tr>
                     <td>{{ $day->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
                     <td>{{ $day->attendance?->clock_in ? $day->attendance->clock_in->format('H:i') : '' }}</td>
                     <td>{{ $day->attendance?->clock_out ? $day->attendance->clock_out->format('H:i') : '' }}</td>

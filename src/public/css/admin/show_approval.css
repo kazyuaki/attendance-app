@@ -107,14 +107,21 @@ body {
     margin-top: 20px;
 }
 
-.edit-button {
+.edit-button,
+.approved-button {
     padding: 8px 24px;
-    background-color: #000;
     color: #fff;
     border: none;
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
+}
+.edit-button {
+    background-color: #000;
+}
+
+.approved-button {
+    background-color: #696969;
 }
 
 .tilde {

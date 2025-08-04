@@ -15,8 +15,7 @@ class AttendanceEditRequestController extends Controller
 {
     public function store(AttendanceEditRequestForm $request)
     {
-        $validated = $request->validated();
-
+        $validated = $request->validated();        
         $attendance = Attendance::findOrFail($validated['attendance_id']);
         $date = $attendance->work_date;
 
