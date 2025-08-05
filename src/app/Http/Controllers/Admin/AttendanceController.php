@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\User;
 use App\Models\AttendanceEditRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
 {
@@ -106,5 +108,60 @@ class AttendanceController extends Controller
 
         return redirect()->route('admin.attendances.index')
             ->with('success', '勤怠データを更新しました。');
+    }
+
+    public function exportCsv(Request $request, User $user): StreamedResponse
+    {
+        $date = trim($request->input('date') ?? now()->format('Y-m'));
+        $carbonDate = Carbon::parse($date)->startOfMonth();
+
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $user->id)
+            ->whereYear('work_date', $carbonDate->year)
+            ->whereMonth('work_date', $carbonDate->month)
+            ->orderBy('work_date', 'asc')
+            ->get();
+
+        $filename = $user->name . "_attendance_" . $carbonDate->format('Y_m') . ".csv";
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($attendances) {
+            $stream = fopen('php://output', 'w');
+            // ヘッダー行
+            fputcsv($stream, ['日付', '出勤', '退勤', '休憩時間', '勤務時間', '備考']);
+
+            foreach ($attendances as $a) {
+                $breakMinutes = $a->breakTimes->sum(function ($b) {
+                    if ($b->break_in && $b->break_out) {
+                        return Carbon::parse($b->break_out)->diffInMinutes(Carbon::parse($b->break_in));
+                    }
+                    return 0;
+                });
+
+                $totalWork = '--:--';
+                if ($a->clock_in && $a->clock_out) {
+                    $workMinutes = Carbon::parse($a->clock_out)->diffInMinutes(Carbon::parse($a->clock_in));
+                    $netMinutes = max($workMinutes - $breakMinutes, 0);
+                    $totalWork = sprintf('%02d:%02d', floor($netMinutes / 60), $netMinutes % 60);
+                }
+
+                fputcsv($stream, [
+                    $a->work_date,
+                    $a->clock_in,
+                    $a->clock_out,
+                    sprintf('%02d:%02d', floor($breakMinutes / 60), $breakMinutes % 60),
+                    $totalWork,
+                    $a->note ?? '',
+                ]);
+            }
+
+            fclose($stream);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

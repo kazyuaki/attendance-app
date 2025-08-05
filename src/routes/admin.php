@@ -26,6 +26,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
         Route::get('users/{user}/attendances', [AdminUserController::class, 'userAttendances'])->name('users.attendances');
+        Route::get('users/{user}/attendances/export',[AdminAttendanceController::class,'exportCsv'])
+        ->name('users.attendances.export');
 
         Route::get('requests', [AdminAttendanceEditRequestController::class, 'index'])->name('requests.index');
         Route::get('requests/{id}', [AdminAttendanceEditRequestController::class, 'show'])->name('requests.show');

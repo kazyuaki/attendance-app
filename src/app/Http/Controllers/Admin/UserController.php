@@ -23,40 +23,56 @@ class UserController extends Controller
     {
         $date = trim($request->input('date') ?? now()->format('Y-m'));
         $carbonDate = \Carbon\Carbon::parse($date)->startOfMonth();
+        $startDate = $carbonDate->copy();
+        $endDate = $carbonDate->copy()->endOfMonth();
 
-        $attendances = Attendance::with('breakTimes')
+        // 勤怠データを日付でキーにする
+        $attendanceMap = Attendance::with('breakTimes')
             ->where('user_id', $user->id)
-            ->whereYear('work_date', $carbonDate->year)
-            ->whereMonth('work_date', $carbonDate->month)
-            ->orderBy('work_date', 'asc')
-            ->get();
+            ->whereBetween('work_date', [$startDate, $endDate])
+            ->get()
+            ->keyBy('work_date');
 
-        foreach ($attendances as $attendance) {
-            // 曜日
-            $attendance->day_of_week = Carbon::parse($attendance->work_date)->locale('ja')->translatedFormat('ddd');
+        $daysInMonth = collect();
 
-            // 休憩時間（分単位で計算）
-            $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
-                if ($break->break_in && $break->break_out) {
-                    return Carbon::parse($break->break_out)->diffInMinutes(Carbon::parse($break->break_in));
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $dayData = new \stdClass();
+            $dayData->date = $date->copy();
+            $dayData->day_of_week = $date->locale('ja')->isoFormat('ddd');
+            $dayData->is_weekend = $date->isWeekend();
+
+            $attendance = $attendanceMap->get($date->toDateString());
+
+            if ($attendance) {
+                // 休憩時間
+                $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
+                    if ($break->break_in && $break->break_out) {
+                        return \Carbon\Carbon::parse($break->break_out)->diffInMinutes(\Carbon\Carbon::parse($break->break_in));
+                    }
+                    return 0;
+                });
+
+                $attendance->break_time_formatted = sprintf('%02d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60);
+
+                // 勤務時間
+                if ($attendance->clock_in && $attendance->clock_out) {
+                    $workMinutes = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_in));
+                    $netMinutes = max($workMinutes - $totalBreakMinutes, 0);
+                    $attendance->total_work_time = sprintf('%02d:%02d', floor($netMinutes / 60), $netMinutes % 60);
+                } else {
+                    $attendance->total_work_time = '--:--';
                 }
-                return 0;
-            });
 
-            $attendance->break_time_formatted = sprintf('%02d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60);
-
-            // 合計勤務時間（出勤～退勤 - 休憩）
-            if ($attendance->clock_in && $attendance->clock_out) {
-                $workMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in));
-                $netMinutes = max($workMinutes - $totalBreakMinutes, 0);
-                $attendance->total_work_time = sprintf('%02d:%02d', floor($netMinutes / 60), $netMinutes % 60);
+                $dayData->attendance = $attendance;
             } else {
-                $attendance->total_work_time = '--:--';
+                $dayData->attendance = null;
             }
+
+            $daysInMonth->push($dayData);
         }
 
         return view('admin.staff.attendance', [
-            'attendances' => $attendances,
+            'daysInMonth' => $daysInMonth,
             'currentMonth' => $carbonDate,
             'user' => $user
         ]);

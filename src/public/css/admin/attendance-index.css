@@ -94,3 +94,20 @@ h2 {
     cursor: pointer;
     font-weight: bold;
 }
+
+.button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+.csv-button {
+    margin-top : 20px;
+    padding: 8px 24px;
+    background-color: #000;
+    text-decoration: none;
+    align-items: right;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}

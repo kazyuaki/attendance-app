@@ -43,28 +43,25 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($attendances as $attendance)
+                @foreach ($daysInMonth as $day)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
-                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
+                    <td>{{ $day->date->format('m/d') }} ({{ $day->day_of_week }})</td>
+                    <td>{{ $day->attendance?->clock_in ? \Carbon\Carbon::parse($day->attendance->clock_in)->format('H:i') : '' }}</td>
+                    <td>{{ $day->attendance?->clock_out ? \Carbon\Carbon::parse($day->attendance->clock_out)->format('H:i') : '' }}</td>
+                    <td>{{ $day->attendance?->break_time_formatted ?? '' }}</td>
+                    <td>{{ $day->attendance?->total_work_time ?? '' }}</td>
                     <td>
-                        {{ gmdate('H:i', ($attendance->breakTimes ?? collect())->sum(function($break) {
-                            return strtotime($break->break_out) - strtotime($break->break_in);
-                            })) 
-                        }}
+                        @if ($day->attendance)
+                        <a href="{{ route('admin.attendances.show', $day->attendance->id) }}" class="detail-link">詳細</a>
+                        @endif
                     </td>
-                    <td>
-                        {{ gmdate('H:i', strtotime($attendance->clock_out) - strtotime($attendance->clock_in) - $attendance->breakTimes->sum(function($break) {
-                            return strtotime($break->break_out) - strtotime($break->break_in);
-                            })) 
-                        }}
-                    </td>
-                    <td><a href="{{ route('admin.attendances.show',['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+        <div class="button-wrapper">
+            <a href="{{ route('admin.users.attendances.export', ['user' => $user->id, 'date' => $currentMonth->format('Y-m')]) }}" class="csv-button">CSV出力</a>
+        </div>
     </div>
 </main>
 @endsection
