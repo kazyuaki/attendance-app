@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\AdminUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -58,6 +57,8 @@ class AdminLoginTest extends TestCase
             'password' => 'password123'
         ]);
 
-        $response->assertSessionHas('error', 'ログイン情報が登録されていません');
+        $response->assertSessionHasErrors([
+            'login' => 'ログイン情報が登録されていません',
+        ]);
     }
 }
