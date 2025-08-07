@@ -80,6 +80,7 @@ class AttendanceDetailTest extends TestCase
 
     public function testAttendanceDetailDisplaysBreakTimes()
     {
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
 
         $attendance = Attendance::factory()->create([
