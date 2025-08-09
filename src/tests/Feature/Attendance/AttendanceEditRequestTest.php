@@ -17,6 +17,19 @@ class AttendanceEditRequestTest extends TestCase
      * @return void
      */
     use RefreshDatabase;
+
+    // ルートヘルパ：環境に合わせて片方を有効化
+    private function indexUrl(array $query = []): string
+    {
+        // A) ルート名がある場合（推奨）
+        if (app('router')->has('user.request.index')) {
+            return route('user.request.index', $query);
+        }
+        // B) 直URLの場合（あなたの既存テストに合わせる）
+        $q = $query ? ('?' . http_build_query($query)) : '';
+        return '/stamp_correction_request/list' . $q;
+    }
+
     public function testErrorWhenClockInAfterClockOut()
     {
         /** @var \App\Models\User $user */
@@ -176,4 +189,76 @@ class AttendanceEditRequestTest extends TestCase
         ]);
     }
 
+
+    public function testPendingTabDisplaysOnlyPendingRequests()
+    {
+        /** @var \App\Models\User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $attendance = Attendance::factory()->for($user)->create();
+
+        $pending = AttendanceEditRequest::factory()->count(2)
+            ->for($user)->state(['attendance_id' => $attendance->id])
+            ->sequence(['note' => 'P-001'], ['note' => 'P-002'])
+            ->create(); // status: pending 既定
+
+        AttendanceEditRequest::factory()->for($user)->state([
+            'attendance_id' => $attendance->id,
+            'status' => 'approved',
+            'note' => 'A-001',
+        ])->create();
+
+        AttendanceEditRequest::factory()->for($user)->state([
+            'attendance_id' => $attendance->id, 
+            'status' => 'returned',
+            'note' => 'R-001',
+        ])->create();
+
+        $response = $this->get($this->indexUrl(['status' => 'pending']));
+        $response->assertOk();
+
+        foreach ($pending as $request) {
+            $response->assertSeeText($request->note);
+        }
+        $response->assertDontSeeText('A-001');
+        $response->assertDontSeeText('R-001'); 
+    }
+
+    public function testDetailButtonLinksToAttendanceShowEachTab()
+    {
+        /** @var \App\Models\User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $attendancePending = Attendance::factory()->for($user)->create();
+        $attendanceApproved = Attendance::factory()->for($user)->create();
+
+        $attendanceEditRequestPending = AttendanceEditRequest::factory()->for($user)->state([
+            'attendance_id' => $attendancePending->id,
+            'status' => 'pending',
+            'note' => 'P-DETAIL',
+        ])->create();
+
+        $attendanceEditRequestApproved = AttendanceEditRequest::factory()->for($user)->state([
+            'attendance_id' => $attendanceApproved->id,
+            'status' => 'approved',
+            'note' => 'A-DETAIL',
+        ])->create();
+    
+        $attendanceShowUrlPending = route('attendance.show',['id' => $attendanceEditRequestPending->attendance_id]);
+        $attendanceShowUrlApproved = route('attendance.show',['id' => $attendanceEditRequestApproved->attendance_id]);
+
+        $this->get($this->indexUrl(['status' => 'pending']))
+            ->assertOk()
+            ->assertSee($attendanceShowUrlPending);
+        $this->get($this->indexUrl(['status' => 'approved']))
+            ->assertOk()
+            ->assertSee($attendanceShowUrlApproved);
+
+        $this->get($attendanceShowUrlPending)->assertOk()->assertSee('勤怠詳細');
+        $this->get($attendanceShowUrlApproved)->assertOk()->assertSee('勤怠詳細');
+    }
+
 }
+
