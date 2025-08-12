@@ -41,16 +41,16 @@
 #### メール認証(Mailhogを使用)
 
 ##### .env のメール設定
-```bash
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS=null
-MAIL_FROM_NAME="${APP_NAME}"
-```
+  ```bash
+  MAIL_MAILER=smtp
+  MAIL_HOST=mailhog
+  MAIL_PORT=1025
+  MAIL_USERNAME=null
+  MAIL_PASSWORD=null
+  MAIL_ENCRYPTION=null
+  MAIL_FROM_ADDRESS=null
+  MAIL_FROM_NAME="${APP_NAME}"
+  ```
 
 ##### メール認証の流れ
 1.	ユーザー登録
@@ -74,28 +74,28 @@ MailHog（http://localhost:8025）
 
 ## PHPUnitを利用したテストに関して(.env.testing推奨)
 1. `env.testing`を作成
-```env
-APP_ENV=testing
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=laravel_db_test
-DB_USERNAME=laravel_user
-DB_PASSWORD=laravel_pass
-MAIL_MAILER=array
-CACHE_DRIVER=array
-QUEUE_CONNECTION=sync
-SESSION_DRIVER=array
-```
+  ```env
+  APP_ENV=testing
+  DB_CONNECTION=mysql
+  DB_HOST=mysql
+  DB_PORT=3306
+  DB_DATABASE=laravel_db_test
+  DB_USERNAME=laravel_user
+  DB_PASSWORD=laravel_pass
+  MAIL_MAILER=array
+  CACHE_DRIVER=array
+  QUEUE_CONNECTION=sync
+  SESSION_DRIVER=array
+  ```
 
 2. テスト用データベースの作成
-```bash
-docker-compose exec mysql bash
-mysql -u root -p
-# パスワードは root
-CREATE DATABASE laravel_db_test;
-exit;
-```
+  ```bash
+  docker-compose exec mysql bash
+  mysql -u root -p
+  # パスワードは root
+  CREATE DATABASE laravel_db_test;
+  exit;
+  ```
 
 3. マイグレーション
 - `docker-compose exec php bash`
@@ -128,7 +128,7 @@ exit;
 | &#124;&lt; | 1 個以上（必須多）  |
 
 #### 主な関係
-  → ユーザーは複数の勤怠を持つ（Attendance は必ず1つの User に属する）
+
 - `attendances 1 ─< attendance_breaks`  
   → 勤怠に休憩が0件または複数つく
 - `users 1 ─< attendance_edit_requests`  
