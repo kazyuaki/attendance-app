@@ -68,8 +68,8 @@ MailHog（http://localhost:8025）
 
 ||メールアドレス|パスワード|
 | --- | --- | --- |
-|一般ユーザー|`user@example.com`|password|
-|管理者ユーザー|`admin@example.com`|password|
+|一般ユーザー| user&#8203;@example.com |password|
+|管理者ユーザー| admin&#8203;@example.com|password|
 
 
 ## PHPUnitを利用したテストに関して(.env.testing推奨)
