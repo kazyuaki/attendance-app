@@ -6,39 +6,41 @@
 1. リポジトリをクローン  
    ```bash
    git clone git@github.com:kazyuaki/contact-form-test.git
-   
+2. コンテナをビルド&起動
+  - `docker-compose up -d --build`
 
-  2. コンテナをビルド&起動  
-    `
-    docker-compose up -d --build
-    `
+3. ストレージリンク 
+  - `php artisan storage:link`
 
-  3. ストレージリンク
-    `php artisan storage:link`
-  4. キャッシュをクリア
-    `php artisan config:clear`
-    `php artisan cache:clear`
+4. キャッシュをクリア
+  - `php artisan config:clear`
+  - `php artisan cache:clear`
         
   ※MySQL は、OS によって起動しない場合があるので、それぞれの PC に合わせて.  `docker-compose.yml` ファイルを編集してください
 
 #### Laravel 環境構築
 1. コンテナに入る
-    `docker-compose exec php bash`
+  - `docker-compose exec php bash`
+
 2. 依存パッケージをインストール
-    `composer install`
+  - `composer install`
+
 3. 環境変数ファイルをコピー
-    `cp .env.example .env` 
+  - `cp .env.example .env` 
+
 4. アプリケーションキーを生成
-    `php artisan key:generate`
+  - `php artisan key:generate`
+
 5. マイグレーション
-    `php artisan migrate`
+  - `php artisan migrate`
+
 6. シーディング
-    `php artisan db:seed`
+  - `php artisan db:seed`
 
 #### メール認証(Mailhogを使用)
 
 ##### .env のメール設定
-```
+```bash
 MAIL_MAILER=smtp
 MAIL_HOST=mailhog
 MAIL_PORT=1025
@@ -54,17 +56,19 @@ MAIL_FROM_NAME="${APP_NAME}"
 http://localhost/register から新規登録すると、未認証ユーザーとして作成されます。
 2.	認証メール送信
 ユーザー作成時に「メールアドレス確認」通知が自動送信されます。
-MailHog（http://localhost:8025）を開き、件名「Verify Email Address」のメールを確認します。
+MailHog（http://localhost:8025）
+を開き、件名「Verify Email Address」のメールを確認します。
 3.	認証リンクをクリック
 メール本文のリンク（/email/verify/{id}/{hash}?...）をクリックすると認証完了。
-認証後は 勤怠登録画面 にリダイレクトされます（※下記のリダイレクト設定参照）。
+認証後は 勤怠登録画面 にリダイレクトされます
+
 
 #### ログイン情報
 
 ||メールアドレス|パスワード|
 | --- | --- | --- |
-|一般ユーザー|user@example.com|password|
-|管理者ユーザー|admin@example.com|password|
+|一般ユーザー|`user@example.com`|password|
+|管理者ユーザー|a`dmin@example.com`|password|
 
 
 ## PHPUnitを利用したテストに関して(.env.testing推奨)
@@ -93,12 +97,12 @@ exit;
 ```
 
 1. マイグレーション
-`docker-compose exec php bash`
-`php artisan migrate:fresh --env=testing`
+- `docker-compose exec php bash`
+- `php artisan migrate:fresh --env=testing`
 
 2. テスト実行
-`docker-compose exec php bash`
-`./vendor/bin/phpunit`
+- `docker-compose exec php bash`
+- `./vendor/bin/phpunit`
 
 
 ## 使用技術(実行環境)
@@ -116,11 +120,11 @@ exit;
 #### カーディナリティ
 | 記号 | 意味               |
 | ---- | ------------------ |
-| `    | `                  | ちょうど1（必須1）  |
-| `o   | `                  | 0 または 1（任意1） |
-| `<`  | 多（複数）         |
-| `o<` | 0 個以上（任意多） |
-| `    | <`                 | 1 個以上（必須多）  |
+|     | ちょうど1（必須1）  |
+| o   | 0 または 1（任意1） |
+| <  | 多（複数）         |
+| o< | 0 個以上（任意多） |
+| <`  | 1 個以上（必須多）  |
 
 #### 主な関係
   → ユーザーは複数の勤怠を持つ（Attendance は必ず1つの User に属する）
