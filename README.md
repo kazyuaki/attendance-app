@@ -73,7 +73,7 @@ MailHog（http://localhost:8025）
 
 
 ## PHPUnitを利用したテストに関して(.env.testing推奨)
-- `env.testing`を作成
+1. `env.testing`を作成
 ```env
 APP_ENV=testing
 DB_CONNECTION=mysql
@@ -88,7 +88,7 @@ QUEUE_CONNECTION=sync
 SESSION_DRIVER=array
 ```
 
-- テスト用データベースの作成
+2. テスト用データベースの作成
 ```bash
 docker-compose exec mysql bash
 mysql -u root -p
@@ -97,11 +97,11 @@ CREATE DATABASE laravel_db_test;
 exit;
 ```
 
-1. マイグレーション
+3. マイグレーション
 - `docker-compose exec php bash`
 - `php artisan migrate:fresh --env=testing`
 
-2. テスト実行
+4. テスト実行
 - `docker-compose exec php bash`
 - `./vendor/bin/phpunit`
 
