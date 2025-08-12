@@ -6,6 +6,7 @@
 1. リポジトリをクローン  
    ```bash
    git clone git@github.com:kazyuaki/contact-form-test.git
+   ```
 2. コンテナをビルド&起動
   - `docker-compose up -d --build`
 
@@ -68,11 +69,11 @@ MailHog（http://localhost:8025）
 ||メールアドレス|パスワード|
 | --- | --- | --- |
 |一般ユーザー|`user@example.com`|password|
-|管理者ユーザー|a`dmin@example.com`|password|
+|管理者ユーザー|`admin@example.com`|password|
 
 
 ## PHPUnitを利用したテストに関して(.env.testing推奨)
-1. `env.testing`を作成
+- `env.testing`を作成
 ```env
 APP_ENV=testing
 DB_CONNECTION=mysql
@@ -87,7 +88,7 @@ QUEUE_CONNECTION=sync
 SESSION_DRIVER=array
 ```
 
-2. テスト用データベースの作成
+- テスト用データベースの作成
 ```bash
 docker-compose exec mysql bash
 mysql -u root -p
@@ -115,16 +116,16 @@ exit;
   - nginx 1.21.1
 
 ## ER 図
-![alt text](Mock-caseER.drawio.png)
+![ER図](Mock-caseER.drawio.png)
 
 #### カーディナリティ
-| 記号 | 意味               |
-| ---- | ------------------ |
-|     | ちょうど1（必須1）  |
-| o   | 0 または 1（任意1） |
-| <  | 多（複数）         |
-| o< | 0 個以上（任意多） |
-| <`  | 1 個以上（必須多）  |
+| 記号       | 意味                |
+| ---------- | ------------------- |
+| &#124;     | ちょうど1（必須1）  |
+| o&#124;    | 0 または 1（任意1） |
+| &lt;       | 多（複数）          |
+| o&lt;      | 0 個以上（任意多）  |
+| &#124;&lt; | 1 個以上（必須多）  |
 
 #### 主な関係
   → ユーザーは複数の勤怠を持つ（Attendance は必ず1つの User に属する）
