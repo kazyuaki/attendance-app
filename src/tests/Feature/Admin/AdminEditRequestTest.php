@@ -48,7 +48,7 @@ class AdminEditRequestTest extends TestCase
      */
     private function adminRequestApproveUrl(AttendanceEditRequest $request): string
     {
-        return "/admin/requests/{$request->id}/approve";
+        return "/admin/requests/{$request->id}";
     }
 
     /**
@@ -132,13 +132,11 @@ class AdminEditRequestTest extends TestCase
             'user_id' => $user->id,
             'attendance_id' => $attendance->id,
             'status' => 'pending',
-            'new_clock_in' => '10:00:00',
-            'new_clock_out' => '19:00:00',
+            'clock_in'      => $attendance->work_date . ' 10:00:00',
+            'clock_out'     => $attendance->work_date . ' 19:00:00',
         ]);
 
-        $response = $this->patch($this->adminRequestShowUrl($request), [
-            'status' => 'approved',
-        ]);
+        $response = $this->post($this->adminRequestApproveUrl($request));
 
         $response->assertRedirect();
 
