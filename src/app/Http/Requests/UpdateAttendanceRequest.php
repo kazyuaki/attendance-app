@@ -17,26 +17,6 @@ class UpdateAttendanceRequest extends FormRequest
         return true;
     }
 
-    public function prepareForValidation()
-    {
-        $breaks = [];
-
-        for ($i = 1; $i <= 5; $i++) {
-            $start = $this->input("break{$i}_start");
-            $end = $this->input("break{$i}_end");
-
-            if ($start || $end) {
-                $breaks[] = [
-                    'start' => $start,
-                    'end' => $end,
-                ];
-            }
-
-            $this->merge([
-                'breaks' => $breaks,
-            ]);
-        }
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -98,6 +78,9 @@ class UpdateAttendanceRequest extends FormRequest
         return [
             'breaks.*.start.date_format' => '休憩開始時間は H:i 形式で入力してください。',
             'breaks.*.end.date_format'   => '休憩終了時間は H:i 形式で入力してください。',
+            'note.required' => '備考を記入してください',
+            'clock_in.required' => '出勤時間を入力してください',
+            'clock_out.required' => '退勤時間を入力してください',
         ];
     }
 }

@@ -29,9 +29,14 @@ class UserController extends Controller
         // 勤怠データを日付でキーにする
         $attendanceMap = Attendance::with('breakTimes')
             ->where('user_id', $user->id)
-            ->whereBetween('work_date', [$startDate, $endDate])
+            ->whereBetween('work_date', [$startDate->toDateString(), $endDate->toDateString()])
             ->get()
-            ->keyBy('work_date');
+            ->mapWithKeys(function ($attendance) {
+                $key = $attendance->work_date instanceof \Carbon\Carbon
+                    ? $attendance->work_date->toDateString()
+                    : \Carbon\Carbon::parse($attendance->work_date)->toDateString();
+                return [$key => $attendance];
+            });
 
         $daysInMonth = collect();
 

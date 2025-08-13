@@ -9,16 +9,21 @@ use App\Models\AttendanceEditRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
 {
     public function index(Request $request)
     {
-        $date = $request->input('date') ?? now()->toDateString();
+        $dateParam = $request->input('date');
+        $date = $dateParam
+            ? Carbon::parse($dateParam)->toDateString()  
+            : now()->toDateString();
         $attendances = Attendance::with(['user', 'breakTimes', 'attendanceEditRequests'])
             ->whereDate('work_date', $date)
-            ->latest()
+            ->orderByDesc('id')
             ->get()
             ->map(function ($attendance) {
                 $totalBreakSeconds = $attendance->breakTimes->sum(function ($break) {
@@ -58,55 +63,68 @@ class AttendanceController extends Controller
         return view('admin.attendance.show', compact('attendance',  'pendingRequest'));
     }
 
-    //管理者 勤怠詳細修正機能
+    // 更新処理（管理者側）
     public function update(UpdateAttendanceRequest $request, $id)
     {
         $attendance = Attendance::with('breakTimes')->findOrFail($id);
-        $date = $attendance->work_date;
+
+        $workDateString = $attendance->work_date instanceof \Carbon\Carbon
+            ? $attendance->work_date->format('Y-m-d')
+            : \Carbon\Carbon::parse($attendance->work_date)->format('Y-m-d');
+
         $validated = $request->validated();
 
-        // 勤怠本体
-        $attendance->clock_in = $validated['clock_in'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_in']}") : null;
-        $attendance->clock_out = $validated['clock_out'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_out']}") : null;
-        $attendance->note = $validated['note'] ?? null;
-        $attendance->save();
+        Log::info('Attendance update start', [
+            'attendance_id' => $attendance->id,
+            'payload'       => $validated,
+        ]);
 
-        // 既存の休憩を取得（上書き・削除のために）
-        $existingBreaks = $attendance->breakTimes;
+        DB::transaction(function () use ($attendance, $workDateString, $validated) {
+            // 出退勤（HH:ii を Y-m-d H:i に）
+            $attendance->clock_in  = !empty($validated['clock_in'])
+                ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$workDateString} {$validated['clock_in']}")
+                : null;
 
-        // 入力された休憩を保存・更新
-        $newBreaks = $validated['breaks'] ?? [];
+            $attendance->clock_out = !empty($validated['clock_out'])
+                ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$workDateString} {$validated['clock_out']}")
+                : null;
 
-        foreach ($newBreaks as $index => $breakInput) {
-            $start = !empty($breakInput['start']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$breakInput['start']}") : null;
-            $end = !empty($breakInput['end']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$breakInput['end']}") : null;
+            $attendance->note = $validated['note'] ?? null;
+            $attendance->save();
 
-            // 両方とも空ならスキップ
-            if (!$start && !$end) {
-                continue;
-            }
+            // 休憩（配列 breaks をそのまま反映：行数が変わっても安定）
+            $attendance->breakTimes()->delete();
+            foreach ($validated['breaks'] ?? [] as $row) {
+                $start = !empty($row['start'])
+                    ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$workDateString} {$row['start']}")
+                    : null;
+                $end   = !empty($row['end'])
+                    ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$workDateString} {$row['end']}")
+                    : null;
 
-            $existing = $existingBreaks->get($index);
-            if ($existing) {
-                $existing->break_in = $start;
-                $existing->break_out = $end;
-                $existing->save();
-            } else {
+                // 両方とも空ならスキップ
+                if (!$start && !$end) {
+                    continue;
+                }
+
                 $attendance->breakTimes()->create([
-                    'break_in' => $start,
+                    'break_in'  => $start,
                     'break_out' => $end,
                 ]);
             }
-        }
+        });
 
-        // 余分な休憩（削除）
-        if (count($existingBreaks) > count($newBreaks)) {
-            for ($i = count($newBreaks); $i < count($existingBreaks); $i++) {
-                $existingBreaks[$i]->delete();
-            }
-        }
+        Log::info('Attendance updated', [
+            'attendance_id' => $attendance->id,
+            'work_date'     => $workDateString,
+            'clock_in'      => optional($attendance->clock_in)->toDateTimeString(),
+            'clock_out'     => optional($attendance->clock_out)->toDateTimeString(),
+            'note'          => $attendance->note,
+            'breaks_now'    => $attendance->breakTimes()->get(['break_in', 'break_out'])->toArray(),
+        ]);
 
-        return redirect()->route('admin.attendances.index')
+        return redirect()
+            ->route('admin.attendances.index', ['date' => $workDateString])
             ->with('success', '勤怠データを更新しました。');
     }
 

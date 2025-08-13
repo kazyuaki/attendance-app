@@ -18,8 +18,11 @@ class Attendance extends Model
     ];
 
     protected $casts = [
-        'clock_in' => 'datetime',
+        'work_date' => 'date:Y-m-d',
+        'clock_in'  => 'datetime',
         'clock_out' => 'datetime',
+        'breakTimes.*.break_in'  => 'datetime',
+        'breakTimes.*.break_out' => 'datetime',
     ];
 
 

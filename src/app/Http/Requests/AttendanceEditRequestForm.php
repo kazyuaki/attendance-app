@@ -72,6 +72,9 @@ class AttendanceEditRequestForm extends FormRequest
         return [
             'breaks.*.start.date_format' => '休憩開始時間は H:i 形式で入力してください。',
             'breaks.*.end.date_format'   => '休憩終了時間は H:i 形式で入力してください。',
+            'note.required' => '備考を記入してください',
+            'clock_in.required' => '出勤時間を入力してください',
+            'clock_out.required' => '退勤時間を入力してください',
         ];
     }
 }

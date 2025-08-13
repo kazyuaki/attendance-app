@@ -46,8 +46,8 @@
                 @foreach ($daysInMonth as $day)
                 <tr>
                     <td>{{ $day->date->locale('ja')->isoFormat('MM/DD(ddd)') }}</td>
-                    <td>{{ $day->attendance?->clock_in ? $day->attendance->clock_in->format('H:i') : '' }}</td>
-                    <td>{{ $day->attendance?->clock_out ? $day->attendance->clock_out->format('H:i') : '' }}</td>
+                    <td>{{ $day->attendance?->clock_in?->format('H:i') ?? '' }}</td>
+                    <td>{{ $day->attendance?->clock_out?->format('H:i') ?? '' }}</td>
                     <td>{{ $day->attendance?->break_time_formatted ?? '' }}</td>
                     <td>{{ $day->attendance?->total_work_time ?? '' }}</td>
                     <td>

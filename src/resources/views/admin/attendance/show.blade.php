@@ -6,7 +6,6 @@
 
 @section('title', '管理者勤怠詳細| 勤怠管理システム')
 
-
 @section('content')
 <main>
     <div class="container">
@@ -30,9 +29,7 @@
                     <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_in)->format('H:i') ?? '-' }}</p>〜
                     <p class="time-input">{{ \Carbon\Carbon::parse($pendingRequest->clock_out)->format('H:i') ?? '-' }}</p>
                 </td>
-
             </tr>
-
             @forelse($pendingRequest->editRequestBreaks as $index => $break)
             <tr>
                 <th class="row-header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
@@ -48,13 +45,11 @@
                 <td colspan="2">-</td>
             </tr>
             @endforelse
-
             <tr>
                 <th class="row-header">備考</th>
                 <td colspan="2">{{ $pendingRequest->note ?? '-' }}</td>
             </tr>
         </table>
-
         <div class="info-message">
             この勤怠データには承認待ちの修正申請があります。承認画面で承認してください
         </div>
@@ -62,6 +57,8 @@
         <form action="{{ route('admin.attendances.update', $attendance->id) }}" method="POST">
             @csrf
             @method('PATCH')
+            <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+
             <table class="attendance-table">
                 <tr>
                     <th class="row-header">名前</th>
@@ -99,11 +96,11 @@
                     </th>
                     <td class="input-cell">
                         <div class="time-range">
-                            <input type="text" name="break{{ $index + 1 }}_start" class="time-input"
-                                value="{{ old('break' . ($index + 1) . '_start', $break->break_in ? \Carbon\Carbon::parse($break->break_in)->format('H:i') : '') }}">
+                            <input type="text" name="breaks[{{ $index }}][start]" class="time-input"
+                                value="{{ old("breaks.$index.start", $break->break_in ? \Carbon\Carbon::parse($break->break_in)->format('H:i') : '') }}">
                             <span class="tilde">〜</span>
-                            <input type="text" name="break{{ $index + 1 }}_end" class="time-input"
-                                value="{{ old('break' . ($index + 1) . '_end', $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '') }}">
+                            <input type="text" name="breaks[{{ $index }}][end]" class="time-input"
+                                value="{{ old("breaks.$index.end", $break->break_out ? \Carbon\Carbon::parse($break->break_out)->format('H:i') : '') }}">
                         </div>
                         @error("breaks.{$index}.start")
                         <div class="error-message">{{ $message }}</div>
@@ -118,16 +115,14 @@
                     <th class="row-header">休憩</th>
                     <td class="input-cell">
                         <div class="time-range">
-                            <input type="text" name="break_start" class="time-input" value="">
+                            <input type="text" name="breaks[0][start]" class="time-input"
+                                value="{{ old('breaks.0.start', '') }}">
                             <span class="tilde">〜</span>
-                            <input type="text" name="break_end" class="time-input" value="">
+                            <input type="text" name="breaks[0][end]" class="time-input"
+                                value="{{ old('breaks.0.end', '') }}">
                         </div>
-                        @error("breaks.0.start")
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
-                        @error("breaks.0.end")
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
+                        @error('breaks.0.start')<div class="error-message">{{ $message }}</div>@enderror
+                        @error('breaks.0.end') <div class="error-message">{{ $message }}</div>@enderror
                     </td>
                 </tr>
                 @endforelse

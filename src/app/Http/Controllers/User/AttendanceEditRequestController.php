@@ -17,11 +17,18 @@ class AttendanceEditRequestController extends Controller
     {
         $validated = $request->validated();        
         $attendance = Attendance::findOrFail($validated['attendance_id']);
-        $date = $attendance->work_date;
+        $date = $attendance->work_date instanceof \Carbon\Carbon
+            ? $attendance->work_date->format('Y-m-d')
+            : \Carbon\Carbon::parse($attendance->work_date)->format('Y-m-d');
 
         // 出退勤の時刻を datetime に変換（nullの場合も考慮）
-        $clock_in = $validated['clock_in'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_in']}") : null;
-        $clock_out = $validated['clock_out'] ? Carbon::createFromFormat('Y-m-d H:i', "$date {$validated['clock_out']}") : null;
+        $clock_in = !empty($validated['clock_in'])
+            ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$date} {$validated['clock_in']}")
+            : null;
+
+        $clock_out = !empty($validated['clock_out'])
+            ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$date} {$validated['clock_out']}")
+            : null;
 
         DB::transaction(function () use ($validated, $date, $clock_in, $clock_out) {
 

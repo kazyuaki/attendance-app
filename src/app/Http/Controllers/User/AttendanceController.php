@@ -83,10 +83,11 @@ class AttendanceController extends Controller
         $date = $request->input('date') ?? now()->format('Y-m');
 
         try {
-            $carbonDate = \Carbon\Carbon::createFromFormat('Y-m', $date)->startOfMonth();
+            $carbonDate = \Carbon\Carbon::parse($date)->startOfMonth();
         } catch (\Exception $e) {
             $carbonDate = now()->startOfMonth(); // fallback
         }
+
         $startDate = $carbonDate->copy();
         $endDate = $carbonDate->copy()->endOfMonth();
 
@@ -95,7 +96,10 @@ class AttendanceController extends Controller
             ->where('user_id', $user->id)
             ->whereBetween('work_date', [$startDate, $endDate])
             ->get()
-            ->keyBy('work_date');
+            ->mapWithKeys(function (Attendance $attendance) {
+                $key = \Carbon\Carbon::parse($attendance->work_date)->toDateString();
+                return [$key => $attendance];
+            });
 
         $daysInMonth = collect();
 
