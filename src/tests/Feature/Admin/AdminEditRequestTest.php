@@ -8,6 +8,7 @@ use App\Models\AttendanceEditRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class AdminEditRequestTest extends TestCase
 {
@@ -123,17 +124,22 @@ class AdminEditRequestTest extends TestCase
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
-            'user_id' => $user->id,
-            'clock_in' => '09:00:00',
-            'clock_out' => '18:00:00',
+            'user_id' => $user->id
+        ]);
+
+        $workDateString = Carbon::parse($attendance->work_date)->toDateString();
+
+        $attendance->update([
+            'clock_in'  => "{$workDateString} 09:00:00",
+            'clock_out' => "{$workDateString} 18:00:00",
         ]);
 
         $request = AttendanceEditRequest::factory()->create([
             'user_id' => $user->id,
             'attendance_id' => $attendance->id,
             'status' => 'pending',
-            'clock_in'      => $attendance->work_date . ' 10:00:00',
-            'clock_out'     => $attendance->work_date . ' 19:00:00',
+            'clock_in'      => "{$workDateString} 10:00:00",
+            'clock_out'     => "{$workDateString} 19:00:00",
         ]);
 
         $response = $this->post($this->adminRequestApproveUrl($request));
@@ -142,7 +148,7 @@ class AdminEditRequestTest extends TestCase
 
         $this->assertDatabaseHas('attendances', [
             'id' => $attendance->id,
-            'clock_in' => '10:00:00',
+            'clock_in'  => '10:00:00',
             'clock_out' => '19:00:00',
         ]);
 
