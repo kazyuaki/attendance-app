@@ -28,8 +28,8 @@ class UserAndAdminSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        // 2025年9月1日〜30日分の勤怠データ作成
-        $startDate = Carbon::create(2025, 9, 1);
+        // 2025年7月1日〜30日分の勤怠データ作成
+        $startDate = Carbon::create(2025, 7, 1);
         $endDate = Carbon::create(2025, 9, 30);
 
         for ($date = $startDate; $date->lte($endDate); $date->addDay()) {

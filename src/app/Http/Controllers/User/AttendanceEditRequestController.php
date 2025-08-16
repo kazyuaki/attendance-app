@@ -15,13 +15,23 @@ class AttendanceEditRequestController extends Controller
 {
     public function store(AttendanceEditRequestForm $request)
     {
-        $validated = $request->validated();        
-        $attendance = Attendance::findOrFail($validated['attendance_id']);
+        $attendanceId =
+            $request->input('id') ??
+            $request->input('attendance_id') ??  
+            $request->query('id') ??
+            $request->route('id');
+            
+        abort_unless($attendanceId, 404);
+
+        $attendance = Attendance::findOrFail($attendanceId);
+        abort_if($attendance->user_id !== Auth::id(), 403);
+
+        $validated = $request->validated();
+
         $date = $attendance->work_date instanceof \Carbon\Carbon
             ? $attendance->work_date->format('Y-m-d')
             : \Carbon\Carbon::parse($attendance->work_date)->format('Y-m-d');
 
-        // 出退勤の時刻を datetime に変換（nullの場合も考慮）
         $clock_in = !empty($validated['clock_in'])
             ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$date} {$validated['clock_in']}")
             : null;
@@ -30,35 +40,33 @@ class AttendanceEditRequestController extends Controller
             ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "{$date} {$validated['clock_out']}")
             : null;
 
-        DB::transaction(function () use ($validated, $date, $clock_in, $clock_out) {
 
-            // 勤怠修正申請レコードの作成
+        DB::transaction(function () use ($validated, $date, $clock_in, $clock_out, $attendance) {
+
             $requestModel = AttendanceEditRequest::create([
-                'user_id' => Auth::id(),
-                'attendance_id' => $validated['attendance_id'],
-                'clock_in' => $clock_in,
-                'clock_out' => $clock_out,
-                'note' => $validated['note'] ?? null,
+                'user_id'       => Auth::id(),
+                'attendance_id' => $attendance->id,
+                'clock_in'      => $clock_in,
+                'clock_out'     => $clock_out,
+                'note'          => $validated['note'] ?? null,
             ]);
 
-            // 休憩情報（breaks）を保存（複数対応）
             if (!empty($validated['breaks']) && is_array($validated['breaks'])) {
                 foreach ($validated['breaks'] as $break) {
-                    $start = !empty($break['start']) ? Carbon::createFromFormat('Y-m-d H:i', "$date {$break['start']}") : null;
-                    $end   = !empty($break['end'])   ? Carbon::createFromFormat('Y-m-d H:i', "$date {$break['end']}") : null;
+                    $start = !empty($break['start']) ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$break['start']}") : null;
+                    $end   = !empty($break['end'])   ? \Carbon\Carbon::createFromFormat('Y-m-d H:i', "$date {$break['end']}")   : null;
 
-                    // どちらか一方でもあれば保存（完全に空の行はスキップ）
                     if ($start || $end) {
                         $requestModel->editRequestBreaks()->create([
                             'break_start' => $start,
-                            'break_end' => $end,
+                            'break_end'   => $end,
                         ]);
                     }
                 }
             }
         });
 
-        return redirect()->route('attendance.show', ['id' => $validated['attendance_id']])
+        return redirect()->route('attendance.show', ['id' => $attendance->id])
             ->with('success', '修正申請を送信しました。');
     }
 

@@ -74,11 +74,6 @@ class AttendanceController extends Controller
 
         $validated = $request->validated();
 
-        Log::info('Attendance update start', [
-            'attendance_id' => $attendance->id,
-            'payload'       => $validated,
-        ]);
-
         DB::transaction(function () use ($attendance, $workDateString, $validated) {
             // 出退勤（HH:ii を Y-m-d H:i に）
             $attendance->clock_in  = !empty($validated['clock_in'])
@@ -113,15 +108,6 @@ class AttendanceController extends Controller
                 ]);
             }
         });
-
-        Log::info('Attendance updated', [
-            'attendance_id' => $attendance->id,
-            'work_date'     => $workDateString,
-            'clock_in'      => optional($attendance->clock_in)->toDateTimeString(),
-            'clock_out'     => optional($attendance->clock_out)->toDateTimeString(),
-            'note'          => $attendance->note,
-            'breaks_now'    => $attendance->breakTimes()->get(['break_in', 'break_out'])->toArray(),
-        ]);
 
         return redirect()
             ->route('admin.attendances.index', ['date' => $workDateString])

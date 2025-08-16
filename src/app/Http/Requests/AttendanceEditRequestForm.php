@@ -20,7 +20,6 @@ class AttendanceEditRequestForm extends FormRequest
     public function rules()
     {
         return [
-            'attendance_id' => ['required', 'integer', 'exists:attendances,id'],
             'clock_in' => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i'],
             'note' => ['required', 'string'],
@@ -72,9 +71,13 @@ class AttendanceEditRequestForm extends FormRequest
         return [
             'breaks.*.start.date_format' => '休憩開始時間は H:i 形式で入力してください。',
             'breaks.*.end.date_format'   => '休憩終了時間は H:i 形式で入力してください。',
-            'note.required' => '備考を記入してください',
             'clock_in.required' => '出勤時間を入力してください',
             'clock_out.required' => '退勤時間を入力してください',
+            'clock_in.date_format' => '出勤時間は H:i 形式で入力してください',
+            'clock_out.date_format' => '退勤時間は H:i 形式で入力してください',
+            'attendance_id.required' => '勤怠IDを指定してください',
+            'attendance_id.integer' => '勤怠IDは整数で指定してください',
+
         ];
     }
 }

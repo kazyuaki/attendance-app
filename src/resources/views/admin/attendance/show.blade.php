@@ -57,8 +57,6 @@
         <form action="{{ route('admin.attendances.update', $attendance->id) }}" method="POST">
             @csrf
             @method('PATCH')
-            <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
-
             <table class="attendance-table">
                 <tr>
                     <th class="row-header">名前</th>

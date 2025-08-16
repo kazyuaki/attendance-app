@@ -98,14 +98,10 @@
         </table>
         <p class="alert">*すでに承認されたため修正はできません。</p>
         @else
-        <form action="{{ route('user.request.store')}}" method="POST">
+        <form action="{{ route('user.request.store')}}"  method="POST">
             @csrf
+            <input type="hidden" name="id" value="{{ $attendance->id }}">
             <table class="attendance-table">
-                <tr style="display: none;">
-                    <td colspan="2">
-                        <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
-                    </td>
-                </tr>
                 <tr>
                     <th class="row-header">名前</th>
                     <td colspan="2">{{ $attendance->user->name }}</td>
