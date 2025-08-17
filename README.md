@@ -5,7 +5,7 @@
 ### Dockerのビルド
 1. リポジトリをクローン  
    ```bash
-   git clone git@github.com:kazyuaki/contact-form-test.git
+   git clone git@github.com:kazyuaki/attendance-app.git
    ```
 2. コンテナをビルド&起動
   - `docker-compose up -d --build`

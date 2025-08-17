@@ -14,7 +14,7 @@ class AttendanceEditRequestForm extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     public function rules()
@@ -77,7 +77,7 @@ class AttendanceEditRequestForm extends FormRequest
             'clock_out.date_format' => '退勤時間は H:i 形式で入力してください',
             'attendance_id.required' => '勤怠IDを指定してください',
             'attendance_id.integer' => '勤怠IDは整数で指定してください',
-
+            'note.required' => '備考を記入してください',
         ];
     }
 }
